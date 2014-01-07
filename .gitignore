@@ -1,0 +1,6 @@
+# Binaries
+target/
+
+# IDE-specific files
+.idea/
+*.iml
