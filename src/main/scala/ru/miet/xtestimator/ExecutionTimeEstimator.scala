@@ -1,5 +1,5 @@
 package ru.miet.xtestimator
 
 class ExecutionTimeEstimator {
-	def estimate(regex: Regex): BasicBlockInfo = ???
+	def estimate(regex: Regex): ExecutionInfo = ???
 }
