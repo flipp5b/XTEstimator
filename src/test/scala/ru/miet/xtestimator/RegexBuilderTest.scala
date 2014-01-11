@@ -3,51 +3,56 @@ package ru.miet.xtestimator
 import org.scalatest.FunSuite
 import ru.miet.xtestimator.cfg.Cfg
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
-import ru.miet.xtestimator.BatchAlternation.Branch
+import ru.miet.xtestimator.regex.{RegexBuilder, Literal, BatchAlternation}
 
 
 class RegexBuilderTest extends FunSuite {
-	test("Simple while loop CFG is converted correctly") {
-		val vA = Vertex("a", new ExecutionInfo(0, 0))
-		val vB = Vertex("b", new ExecutionInfo(0, 0))
-		val vC = Vertex("c", new ExecutionInfo(0, 0))
+	private def vertex(id: String) = Vertex(id, new StochasticVariable(0, 0))
 
-		val eAB = Edge(vA, vB, 1)
-		val eBA = Edge(vB, vA, 1)
-		val eAC = Edge(vA, vC, 1)
+	private def edge(source: Vertex, target: Vertex) = Edge(source, target)
+
+	test("Simple while loop CFG is converted correctly") {
+		val vA = vertex("a")
+		val vB = vertex("b")
+		val vC = vertex("c")
+
+		val eAB = edge(vA, vB)
+		val eBA = edge(vB, vA)
+		val eAC = edge(vA, vC)
 
 		val cfg = Cfg(Set(vA, vB, vC), Set(eAB, eBA, eAC), vA, vC)
-		val actualRegex = new RegexBuilder(cfg).build
+		val actualRegex = RegexBuilder(cfg).build.simplify
 
 		val a = Literal(vA)
 		val b = Literal(vB)
 		val c = Literal(vC)
-		val expectedRegex = (a + b).* + a + c
+		val expectedRegex = (a + b) * vA.loopBound + a + c
 
 		assert(expectedRegex == actualRegex)
 	}
 
 	test("CFG with loops and bypasses is converted correctly") {
-		val vA = Vertex("a", new ExecutionInfo(0, 0))
-		val vB = Vertex("b", new ExecutionInfo(0, 0))
-		val vC = Vertex("c", new ExecutionInfo(0, 0))
-		val vD = Vertex("d", new ExecutionInfo(0, 0))
+		val vA = vertex("a")
+		val vB = vertex("b")
+		val vC = vertex("c")
+		val vD = vertex("d")
 
-		val eAB = Edge(vA, vB, 1)
-		val eBB = Edge(vB, vB, 1)
-		val eBC = Edge(vB, vC, 1)
-		val eCA = Edge(vC, vA, 1)
-		val eAD = Edge(vA, vD, 1)
-		val eBD = Edge(vB, vD, 1)
+		val eAB = edge(vA, vB)
+		val eBB = edge(vB, vB)
+		val eBC = edge(vB, vC)
+		val eCA = edge(vC, vA)
+		val eAD = edge(vA, vD)
+		val eBD = edge(vB, vD)
 
 		val cfg = Cfg(Set(vA, vB, vC, vD), Set(eAB, eBB, eBC, eCA, eAD, eBD), vA, vD)
-		val actualRegex = new RegexBuilder(cfg).build
+		val actualRegex = RegexBuilder(cfg).build.simplify
 
 		val a = Literal(vA)
 		val b = Literal(vB)
 		val c = Literal(vC)
 		val d = Literal(vD)
-		val expectedRegex = (a + (b.* + (b + c))).* + BatchAlternation(Branch(a, 1), Branch(a + (b.* + b), 1)) + d
+		val expectedRegex = (a + (b * vB.loopBound + (b + c))) * vA.loopBound +
+			BatchAlternation((a, eAD.probability), (a + (b * vB.loopBound + b), eAB.probability)) + d
 
 		assert(expectedRegex == actualRegex)
 	}
