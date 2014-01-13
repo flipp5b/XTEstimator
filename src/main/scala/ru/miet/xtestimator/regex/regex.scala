@@ -13,14 +13,14 @@ sealed abstract class Regex {
 
 	def simplify: Regex = this
 
-	final def estimate: StochasticVariable = simplify.doEstimate
+	final def estimate: StochasticVariable = simplify.estimateSimplified
 
-	protected[regex] def doEstimate: StochasticVariable
+	protected[regex] def estimateSimplified: StochasticVariable
 }
 
 
 case class Literal(value: String, executionTime: StochasticVariable) extends Regex {
-	def doEstimate = executionTime
+	def estimateSimplified = executionTime
 
 	override def toString: String = value
 }
@@ -31,14 +31,14 @@ object Literal {
 
 
 case object EmptySet extends Regex {
-	def doEstimate = StochasticVariable.Zero // TODO: this may be incorrect
+	def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "Ø"
 }
 
 
 case object EmptyString extends Regex {
-	def doEstimate = StochasticVariable.Zero // TODO: this may be incorrect
+	def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "ε"
 }
@@ -57,9 +57,9 @@ case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 		}
 	}
 
-	def doEstimate = {
-		val lhsExecutionTime = lhs.doEstimate
-		val rhsExecutionTime = rhs.doEstimate
+	def estimateSimplified = {
+		val lhsExecutionTime = lhs.estimateSimplified
+		val rhsExecutionTime = rhs.estimateSimplified
 
 		lhsExecutionTime + rhsExecutionTime
 	}
@@ -78,10 +78,10 @@ case class BatchAlternation(branches: List[Branch]) extends Regex {
 		}
 	}
 
-	def doEstimate = {
+	def estimateSimplified = {
 		val tmpExecutionTime = branches.foldLeft(StochasticVariable.Zero) {
 			(accumulator, branch) => {
-				val branchExecutionTime = branch.regex.doEstimate
+				val branchExecutionTime = branch.regex.estimateSimplified
 				val e = branch.probability * branchExecutionTime.expectation
 				val v = branch.probability * (branchExecutionTime.variance + Math.pow(branchExecutionTime.expectation, 2))
 
@@ -113,10 +113,10 @@ case class Repetition(body: Body) extends Regex {
 		}
 	}
 
-	def doEstimate = {
+	def estimateSimplified = {
 		body.loopBound match {
 			case Some(bound) =>
-				val bodyExecutionTime = body.regex.doEstimate
+				val bodyExecutionTime = body.regex.estimateSimplified
 				val e = bodyExecutionTime.expectation * bound.expectation
 				val v = bodyExecutionTime.variance * bound.expectation + Math.pow(bodyExecutionTime.expectation, 2) * bound.variance
 				StochasticVariable(e, v)

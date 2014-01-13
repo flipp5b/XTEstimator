@@ -9,8 +9,6 @@ trait Cfg {
 
 	def end: Vertex
 
-	def getAdjacentVertices(vertex: Vertex): Set[Vertex]
-
 	def getIncidentEdges(vertex: Vertex): Set[Edge]
 }
 
