@@ -6,7 +6,7 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
 
 class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
-	def build: Regex = buildRegex(Set.empty, cfg.start, cfg.end) + Literal(cfg.end)
+	def build: Regex = buildRegex(Set.empty, cfg.entry, cfg.exit) + Literal(cfg.exit)
 
 	private def buildRegex(forbiddenSet: Set[Vertex], source: Vertex, target: Vertex): Regex = {
 		val loopPart = buildRegexPart(forbiddenSet, source, source) * source.loopBound
