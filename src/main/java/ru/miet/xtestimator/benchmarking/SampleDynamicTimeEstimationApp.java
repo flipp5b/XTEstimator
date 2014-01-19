@@ -3,7 +3,6 @@ package ru.miet.xtestimator.benchmarking;
 import java.util.Random;
 
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "UnusedDeclaration"})
 public class SampleDynamicTimeEstimationApp {
 	private static double nStd = Sample.loopBound().stdDeviation();
 	private static double nE = Sample.loopBound().expectation();
@@ -24,31 +23,48 @@ public class SampleDynamicTimeEstimationApp {
 
 	private static Benchmark initializationBenchmark() {
 		return new Benchmark("Initialization", new Runnable() {
+			private double n;
+			private double v;
+			private int i;
 			@Override
 			public void run() {
 				Random rand = new Random();
-				double n = rand.nextGaussian() * nStd + nE;
-				int i = 0;
+				n = rand.nextGaussian() * nStd + nE;
+				v = 0;
+				i = 0;
+			}
+			@Override
+			public String toString() {
+				return "n=" + n + "; v=" + v + "; i=" + i;
 			}
 		});
 	}
 
 	private static Benchmark loopHeaderBenchmark() {
 		return new Benchmark("Loop header", new Runnable() {
-			private int i = 30;
+			private int i = 42;
+			private boolean b;
 			@Override
 			public void run() {
-				boolean b = i < nE;
+				b = i < nE;
+			}
+			@Override
+			public String toString() {
+				return "b=" + b;
 			}
 		});
 	}
 
 	private static Benchmark loopFooterBenchmark() {
 		return new Benchmark("Loop footer", new Runnable() {
-			private int i = 30;
+			private int i = 42;
 			@Override
 			public void run() {
 				++i;
+			}
+			@Override
+			public String toString() {
+				return "i=" + i;
 			}
 		});
 	}
@@ -56,46 +72,67 @@ public class SampleDynamicTimeEstimationApp {
 	private static Benchmark ifHeaderBenchmark() {
 		return new Benchmark("If header", new Runnable() {
 			private Random rand = new Random();
+			private boolean b;
 			@Override
 			public void run() {
-				boolean b = rand.nextDouble() <= trueBranchProbability;
+				b = rand.nextDouble() <= trueBranchProbability;
+			}
+			@Override
+			public String toString() {
+				return "b=" + b;
 			}
 		});
 	}
 
 	private static Benchmark trueBranchBenchmark() {
 		return new Benchmark("True-branch", new Runnable() {
+			private double v = 1.1;
 			@Override
 			public void run() {
-				Math.pow(1.2345, 1024);
+				v += Math.pow(v, 2);
+			}
+			@Override
+			public String toString() {
+				return "v=" + v;
 			}
 		});
 	}
 
 	private static Benchmark falseBranchBenchmark() {
 		return new Benchmark("False-branch", new Runnable() {
+			private double v = 1.1;
 			@Override
 			public void run() {
-				Math.log(1.4567e10);
+				v += Math.log(v);
+			}
+			@Override
+			public String toString() {
+				return "v=" + v;
 			}
 		});
 	}
 
 	private static Benchmark entireProgramBenchmark() {
 		return new Benchmark("Entire program", new Runnable() {
+			private double v;
 			@Override
 			public void run() {
 				Random rand = new Random();
 				double n = rand.nextGaussian() * nStd + nE;
 
+				v = 1.1;
 				for (int i = 0; i < n; ++i) {
 					if (rand.nextDouble() <= trueBranchProbability) {
-						Math.pow(1.2345, 1024);
+						v += Math.pow(v, 2);
 					}
 					else {
-						Math.log(1.4567e10);
+						v += Math.log(v);
 					}
 				}
+			}
+			@Override
+			public String toString() {
+				return "v=" + v;
 			}
 		});
 	}

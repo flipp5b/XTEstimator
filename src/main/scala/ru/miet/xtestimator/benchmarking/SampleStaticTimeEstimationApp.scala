@@ -7,12 +7,12 @@ import ru.miet.xtestimator.regex.RegexBuilder
 
 object SampleStaticTimeEstimationApp {
 	def main(args: Array[String]) {
-		val vA = Vertex("a", StochasticVariable.withExpectationAndStd(181.892, 652.909))
-		val vB = Vertex("b", StochasticVariable.withExpectationAndStd(1.143, 33.956), Sample.loopBound)
-		val vC = Vertex("c", StochasticVariable.withExpectationAndStd(23.557, 499.199))
-		val vD = Vertex("d", StochasticVariable.withExpectationAndStd(3.427, 98.301))
-		val vE = Vertex("e", StochasticVariable.withExpectationAndStd(3.434, 76.635))
-		val vF = Vertex("f", StochasticVariable.withExpectationAndStd(2.603, 160.068))
+		val vA = Vertex("a", StochasticVariable.withExpectationAndStd(183.084, 497.147))
+		val vB = Vertex("b", StochasticVariable.withExpectationAndStd(2.649, 166.132), Sample.loopBound)
+		val vC = Vertex("c", StochasticVariable.withExpectationAndStd(23.270, 226.146))
+		val vD = Vertex("d", StochasticVariable.withExpectationAndStd(718.498, 1624))
+		val vE = Vertex("e", StochasticVariable.withExpectationAndStd(26.896, 269.233))
+		val vF = Vertex("f", StochasticVariable.withExpectationAndStd(2.661, 97.215))
 		val vG = Vertex("g", StochasticVariable.Zero)
 
 		val eAB = Edge(vA, vB)
