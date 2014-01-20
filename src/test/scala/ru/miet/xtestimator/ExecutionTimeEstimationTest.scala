@@ -26,17 +26,17 @@ class ExecutionTimeEstimationTest extends FunSuite {
 
 		val expectedExecutionTime = {
 			val bLoopExecutionTime = StochasticVariable(
-				vB.executionTime.expectation * vB.loopBound.get.expectation,
-				vB.executionTime.variance * vB.loopBound.get.expectation + Math.pow(vB.executionTime.expectation, 2) * vB.loopBound.get.variance)
+				vB.executionTime.mean * vB.loopBound.get.mean,
+				vB.executionTime.variance * vB.loopBound.get.mean + Math.pow(vB.executionTime.mean, 2) * vB.loopBound.get.variance)
 			val abbExecutionTime = vA.executionTime + bLoopExecutionTime + vB.executionTime
 			val abbcExecutionTime = abbExecutionTime + vC.executionTime
 			val abbcLoopExecutionTime = StochasticVariable(
-				abbcExecutionTime.expectation * vA.loopBound.get.expectation,
-				abbcExecutionTime.variance * vA.loopBound.get.expectation + Math.pow(abbcExecutionTime.expectation, 2) * vA.loopBound.get.variance)
+				abbcExecutionTime.mean * vA.loopBound.get.mean,
+				abbcExecutionTime.variance * vA.loopBound.get.mean + Math.pow(abbcExecutionTime.mean, 2) * vA.loopBound.get.variance)
 			val forkExecutionTime = {
-				val e = eAB.probability * abbExecutionTime.expectation + eAD.probability * vA.executionTime.expectation
-				val v = eAB.probability * (abbExecutionTime.variance + Math.pow(abbExecutionTime.expectation, 2)) +
-					eAD.probability * (vA.executionTime.variance + Math.pow(vA.executionTime.expectation, 2)) -
+				val e = eAB.probability * abbExecutionTime.mean + eAD.probability * vA.executionTime.mean
+				val v = eAB.probability * (abbExecutionTime.variance + Math.pow(abbExecutionTime.mean, 2)) +
+					eAD.probability * (vA.executionTime.variance + Math.pow(vA.executionTime.mean, 2)) -
 					e * e
 				StochasticVariable(e, v)
 			}

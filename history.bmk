@@ -1,0 +1,85 @@
+[ [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 529534.9911702474,
+  "variance" : 1.6198270676088367E9
+} ], [ {
+  "id" : "e",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 28.6587269646426,
+  "variance" : 82236.46127309834
+} ], [ {
+  "id" : "c",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 22.63517028490703,
+  "variance" : 62916.17510612536
+} ], [ {
+  "id" : "b",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 0.3064166597090661,
+  "variance" : 1503.0698944082792
+} ], [ {
+  "id" : "a",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 182.81608458360031,
+  "variance" : 455523.77212893445
+} ], [ {
+  "id" : "f",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 3.673446101695298,
+  "variance" : 11351.709828105584
+} ], [ {
+  "id" : "d",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 719.4988671859105,
+  "variance" : 1900073.0119517741
+} ] ]

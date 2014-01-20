@@ -82,13 +82,13 @@ case class BatchAlternation(branches: List[Branch]) extends Regex {
 		val tmpExecutionTime = branches.foldLeft(StochasticVariable.Zero) {
 			(accumulator, branch) => {
 				val branchExecutionTime = branch.regex.estimateSimplified
-				val e = branch.probability * branchExecutionTime.expectation
-				val v = branch.probability * (branchExecutionTime.variance + Math.pow(branchExecutionTime.expectation, 2))
+				val m = branch.probability * branchExecutionTime.mean
+				val v = branch.probability * (branchExecutionTime.variance + Math.pow(branchExecutionTime.mean, 2))
 
-				accumulator + StochasticVariable(e, v)
+				accumulator + StochasticVariable(m, v)
 			}
 		}
-		tmpExecutionTime.copy(variance = tmpExecutionTime.variance - Math.pow(tmpExecutionTime.expectation, 2))
+		tmpExecutionTime.copy(variance = tmpExecutionTime.variance - Math.pow(tmpExecutionTime.mean, 2))
 	}
 
 	override def toString: String = branches.mkString(" | ")
@@ -117,9 +117,9 @@ case class Repetition(body: Body) extends Regex {
 		body.loopBound match {
 			case Some(bound) =>
 				val bodyExecutionTime = body.regex.estimateSimplified
-				val e = bodyExecutionTime.expectation * bound.expectation
-				val v = bodyExecutionTime.variance * bound.expectation + Math.pow(bodyExecutionTime.expectation, 2) * bound.variance
-				StochasticVariable(e, v)
+				val m = bodyExecutionTime.mean * bound.mean
+				val v = bodyExecutionTime.variance * bound.mean + Math.pow(bodyExecutionTime.mean, 2) * bound.variance
+				StochasticVariable(m, v)
 			case None => throw new IllegalStateException() // TODO: refine exception
 		}
 	}

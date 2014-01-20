@@ -50,17 +50,17 @@ class RegexTest extends FunSuite {
 
 		val expectedExecutionTime = {
 			val bLoopExecutionTime = StochasticVariable(
-				b.executionTime.expectation * bB.expectation,
-				b.executionTime.variance * bB.expectation + Math.pow(b.executionTime.expectation, 2) * bB.variance)
+				b.executionTime.mean * bB.mean,
+				b.executionTime.variance * bB.mean + Math.pow(b.executionTime.mean, 2) * bB.variance)
 			val abbExecutionTime = a.executionTime + bLoopExecutionTime + b.executionTime
 			val abbcExecutionTime = abbExecutionTime + c.executionTime
 			val abbcLoopExecutionTime = StochasticVariable(
-				abbcExecutionTime.expectation * aB.expectation,
-				abbcExecutionTime.variance * aB.expectation + Math.pow(abbcExecutionTime.expectation, 2) * aB.variance)
+				abbcExecutionTime.mean * aB.mean,
+				abbcExecutionTime.variance * aB.mean + Math.pow(abbcExecutionTime.mean, 2) * aB.variance)
 			val forkExecutionTime = {
-				val e = abP * abbExecutionTime.expectation + adP * a.executionTime.expectation
-				val v = abP * (abbExecutionTime.variance + Math.pow(abbExecutionTime.expectation, 2)) +
-					adP * (a.executionTime.variance + Math.pow(a.executionTime.expectation, 2)) -
+				val e = abP * abbExecutionTime.mean + adP * a.executionTime.mean
+				val v = abP * (abbExecutionTime.variance + Math.pow(abbExecutionTime.mean, 2)) +
+					adP * (a.executionTime.variance + Math.pow(a.executionTime.mean, 2)) -
 					e * e
 				StochasticVariable(e, v)
 			}
