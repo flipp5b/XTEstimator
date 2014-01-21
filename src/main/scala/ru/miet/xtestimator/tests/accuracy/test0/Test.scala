@@ -17,26 +17,40 @@ object Test {
 	def main(args: Array[String]) {
 		Locale.setDefault(new Locale("ru"))
 
-		var testInfoSeq = List[TestInfo]()
 		BenchmarkData.load()
-		testInfoSeq ::= test(Configuration(StochasticVariable(1000, 0), 0.7))
+		val testInfoSeq = Seq(
+			test(Configuration(StochasticVariable(1000, 0), 0.7)),
+			test(Configuration(StochasticVariable.withMeanAndStd(1000, 10), 0.7)),
+			test(Configuration(StochasticVariable.withMeanAndStd(1000, 100), 0.7))
+		)
 		BenchmarkData.save()
 
-		ChartBuilder.build(testInfoSeq).show
+		val windowSize = (940, 450)
+		ChartBuilder.build(
+			"Ожидаемое время исполнения тестовой программы",
+			"Математическое ожидание, мкс",
+			testInfoSeq map { case TestInfo(c, d, s) => ChartCategory(c, d.mean * 1e-3, s.mean * 1e-3) }
+		).show(dim = windowSize)
+		ChartBuilder.build(
+			"Квадратичное отклонение времени исполнения тестовой программы",
+			"Квадратичное отклонение, мкс",
+			testInfoSeq map { case TestInfo(c, d, s) => ChartCategory(c, d.stdDeviation * 1e-3, s.stdDeviation * 1e-3) }
+		).show(dim = windowSize)
 	}
 
 	private def test(config: Configuration) = {
-		val dynamicEstimate = BenchmarkData.entireProgramExecutionTime(config)
-		println("Dynamic estimate: " + dynamicEstimate)
 		val staticEstimate = estimateStatically(config)
 		println("Static estimate: " + staticEstimate)
+
+		val dynamicEstimate = BenchmarkData.entireProgramExecutionTime(config)
+		println("Dynamic estimate: " + dynamicEstimate)
 
 		TestInfo(config, dynamicEstimate, staticEstimate)
 	}
 
 	private def estimateStatically(config: Configuration) = {
-		val vertex = (id: String) => Vertex(id, BenchmarkData.basicBlockExecutionTime(id, config))
-		val vertexWithLoop = (id: String, loopBound: StochasticVariable) => Vertex(id, BenchmarkData.basicBlockExecutionTime(id, config), loopBound)
+		def vertex(id: String) = Vertex(id, BenchmarkData.basicBlockExecutionTime(id))
+		def vertexWithLoop(id: String, loopBound: StochasticVariable) = Vertex(id, BenchmarkData.basicBlockExecutionTime(id), loopBound)
 
 		val a = vertex("a")
 		val b = vertexWithLoop("b", config.loopBound)
@@ -64,22 +78,38 @@ object Test {
 
 	private case class TestInfo(config: Configuration, dynamicEstimate: StochasticVariable, staticEstimate: StochasticVariable)
 
+	private case class ChartCategory(config: Configuration, dynamicEstimate: Double, staticEstimate: Double)
 
 	private object ChartBuilder {
-		def build(testInfoSeq: Seq[TestInfo]) = {
+		def build(title: String, yLabel: String, testInfoSeq: Seq[ChartCategory]) = {
 			val chart = ChartFactories.BarChart(
-				buildDataSet(testInfoSeq),
-				title = "Время исполнения тестовой программы",
+				createDataSet(testInfoSeq),
+				title = title,
 				domainAxisLabel = "Конфигурации",
-				rangeAxisLabel = "Математическое ожидание, мкс",
+				rangeAxisLabel = yLabel,
 				legend = true,
-				tooltips = true)
+				tooltips = true)(theme)
 
 			chart.peer.getLegend.setPosition(RectangleEdge.RIGHT)
 
 			val renderer = chart.peer.getCategoryPlot.getRenderer
 			renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator)
 			renderer.setBaseItemLabelsVisible(true)
+
+			chart
+		}
+
+		private def createDataSet(testInfoSeq: Seq[ChartCategory]) =
+			testInfoSeq.map {
+				case ChartCategory(config, dynamicEstimate, staticEstimate) =>
+					TestConfiguration(0, config) -> Seq(
+						"Динамическая оценка" -> dynamicEstimate,
+						"Статическая оценка" -> staticEstimate
+					)
+			}.toCategoryDataset
+
+		private val theme = {
+			def font(name: String, pattern: Font) = new Font(name, pattern.getStyle, pattern.getSize)
 
 			val theme = StandardChartTheme.createJFreeTheme().asInstanceOf[StandardChartTheme]
 			val oldExtraLargeFont = theme.getExtraLargeFont
@@ -88,23 +118,13 @@ object Test {
 			val oldSmallFont = theme.getSmallFont
 
 			val newFontName = "DejaVu Sans"
-			theme.setExtraLargeFont(createFont(newFontName, oldExtraLargeFont))
-			theme.setLargeFont(createFont(newFontName, oldLargeFont))
-			theme.setRegularFont(createFont(newFontName, oldRegularFont))
-			theme.setSmallFont(createFont(newFontName, oldSmallFont))
+			theme.setExtraLargeFont(font(newFontName, oldExtraLargeFont))
+			theme.setLargeFont(font(newFontName, oldLargeFont))
+			theme.setRegularFont(font(newFontName, oldRegularFont))
+			theme.setSmallFont(font(newFontName, oldSmallFont))
 
-			theme.apply(chart.peer)
-
-			chart
+			theme
 		}
-
-		private def buildDataSet(testInfoSeq: Seq[TestInfo]) =
-			testInfoSeq.map {
-				case TestInfo(config, dynamicEstimate, staticEstimate) =>
-					(TestConfiguration(0, config), Seq(("Динамическая оценка", dynamicEstimate.mean * 1e-3), ("Статическая оценка", staticEstimate.mean * 1e-3)))
-			}.toCategoryDataset
-
-		private def createFont(name: String, pattern: Font) = new Font(name, pattern.getStyle, pattern.getSize)
 
 		private case class TestConfiguration(order: Int, config: Configuration) extends Ordered[TestConfiguration] {
 			def compare(that: TestConfiguration): Int = this.order compare that.order

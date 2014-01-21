@@ -11,8 +11,9 @@ import java.io.File
 
 
 object BenchmarkData {
+	var forceBenchmarking: Boolean = false
 	private val historyFile = new File("history.bmk")
-	private val history = mutable.Map[Key, StochasticVariable]()
+	private val history = mutable.LinkedHashMap[Key, StochasticVariable]()
 	private val mapper = new ObjectMapper() with ScalaObjectMapper
 	mapper.configure(SerializationFeature.INDENT_OUTPUT, true)
 	mapper.registerModule(DefaultScalaModule)
@@ -26,27 +27,29 @@ object BenchmarkData {
 		mapper.writeValue(historyFile, history.toList)
 	}
 
-	private def benchmark(config: Configuration, benchmarkConstructor: Configuration => Benchmark) = {
-		val benchmark = benchmarkConstructor(config)
-		println(benchmark)
+	private def benchmark(key: Key, benchmarkConstructor: => Benchmark) =
+		if (forceBenchmarking || !(history contains key)) {
+			val benchmark = benchmarkConstructor
+			println(benchmark)
+			val executionTime = benchmark.getExecutionTime
+			history(key) = executionTime
+			executionTime
+		}
+		else {
+			history(key)
+		}
 
-		benchmark.getExecutionTime
-	}
+	def basicBlockExecutionTime(id: String): StochasticVariable =
+		benchmark(Key(id, None), id match {
+			case "a" => initialization
+			case "b" => loopHeader
+			case "c" => ifHeader
+			case "d" => trueBranch
+			case "e" => falseBranch
+			case "f" => loopFooter
+		})
 
-	def basicBlockExecutionTime(id: String, config: Configuration): StochasticVariable =
-		history.getOrElseUpdate(
-			Key(id, config),
-			benchmark(config, id match {
-				case "a" => initialization
-				case "b" => loopHeader
-				case "c" => ifHeader
-				case "d" => trueBranch
-				case "e" => falseBranch
-				case "f" => loopFooter
-			})
-		)
-
-	private def initialization(config: Configuration) =
+	private def initialization =
 		new Benchmark("Initialization", new Runnable {
 			private var n: Double = .0
 			private var v: Double = .0
@@ -60,10 +63,10 @@ object BenchmarkData {
 			override def toString: String = s"n=$n; v=$v; i=$i"
 		})
 
-	private def loopHeader(config: Configuration) =
+	private def loopHeader =
 		new Benchmark("Loop header", new Runnable {
 			private val i: Int = 42
-			private val nE: Double = config.loopBound.mean
+			private val nE: Double = 2000
 			private var b: Boolean = false
 			def run() {
 				b = i < nE
@@ -71,10 +74,10 @@ object BenchmarkData {
 			override def toString: String = s"b=$b"
 		})
 
-	private def ifHeader(config: Configuration) =
+	private def ifHeader =
 		new Benchmark("If header", new Runnable {
 			private val rand: Random = new Random
-			private val trueBranchProbability: Double = config.trueBranchProbability
+			private val trueBranchProbability: Double = .5
 			private var b: Boolean = false
 			def run() {
 				b = rand.nextDouble <= trueBranchProbability
@@ -82,7 +85,7 @@ object BenchmarkData {
 			override def toString: String = s"b=$b"
 		})
 
-	private def trueBranch(config: Configuration) =
+	private def trueBranch =
 		new Benchmark("True-branch", new Runnable {
 			private var v: Double = 1.1
 			def run() {
@@ -91,7 +94,7 @@ object BenchmarkData {
 			override def toString: String = s"v=$v"
 		})
 
-	private def falseBranch(config: Configuration) =
+	private def falseBranch =
 		new Benchmark("False-branch", new Runnable {
 			private var v: Double = 1.1
 			def run() {
@@ -101,7 +104,7 @@ object BenchmarkData {
 
 		})
 
-	private def loopFooter(config: Configuration) =
+	private def loopFooter =
 		new Benchmark("Loop footer", new Runnable {
 			private var i: Int = 42
 			def run() {
@@ -110,8 +113,7 @@ object BenchmarkData {
 			override def toString: String = s"i=$i"
 		})
 
-	def entireProgramExecutionTime(config: Configuration): StochasticVariable =
-		history.getOrElseUpdate(Key("entire", config), benchmark(config, entireProgram))
+	def entireProgramExecutionTime(config: Configuration): StochasticVariable = benchmark(Key("entire", Some(config)), entireProgram(config))
 
 	private def entireProgram(config: Configuration) =
 		new Benchmark("Entire program", new Runnable {
@@ -141,5 +143,5 @@ object BenchmarkData {
 		})
 
 
-	private case class Key(id: String, config: Configuration)
+	private case class Key(id: String, config: Option[Configuration])
 }
