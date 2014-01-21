@@ -70,4 +70,64 @@
 }, {
   "mean" : 531060.537044271,
   "variance" : 4.785226132489229E9
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000000.0,
+      "variance" : 0.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 5.3521928439999986E8,
+  "variance" : 1.9900550904776501E12
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000000.0,
+      "variance" : 100.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 5.3516937088333327E8,
+  "variance" : 1.9318568614830398E12
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000000.0,
+      "variance" : 10000.0
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 5.3548205760000014E8,
+  "variance" : 2.6283178877068096E12
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000000.0,
+      "variance" : 1.0E8
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 5.3459908896666664E8,
+  "variance" : 2.634090153490047E13
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBound" : {
+      "mean" : 1000000.0,
+      "variance" : 1.0E10
+    },
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 5.395880939499998E8,
+  "variance" : 4.111109278765668E15
 } ] ]
