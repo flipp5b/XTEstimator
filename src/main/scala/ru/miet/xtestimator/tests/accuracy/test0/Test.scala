@@ -104,9 +104,9 @@ object Test {
 		}
 
 		private def createDataSet(testInfoSeq: Seq[ChartCategory]) =
-			testInfoSeq.map {
-				case ChartCategory(config, dynamicEstimate, staticEstimate) =>
-					TestConfiguration(0, config) -> Seq(
+			testInfoSeq.zipWithIndex.map {
+				case (ChartCategory(config, dynamicEstimate, staticEstimate), i) =>
+					TestConfiguration(i, config) -> Seq(
 						"Динамическая оценка" -> dynamicEstimate,
 						"Статическая оценка" -> staticEstimate
 					)
@@ -139,20 +139,18 @@ object Test {
 				f"P₁=${config.trueBranchProbability}%.1f"
 			
 			private def powerOfTen2String(number: Double) = {
-				if (number == 0) {
-					"0"
-				}
-				else {
-					val exponent = Math.log10(number)
-					require(exponent == exponent.toInt)
-					"10" + (exponent.toInt match {
-						case 1 => "¹"
-						case 2 => "²"
-						case 3 => "³"
-						case 4 => "⁴"
-						case 5 => "⁵"
-						case 6 => "⁶"
-					})
+				number match {
+					case 0.0 => "0"
+					case 1.0 => "1"
+					case _ =>
+						"10" + (Math.log10(number) match {
+							case 1.0 => ""
+							case 2.0 => "²"
+							case 3.0 => "³"
+							case 4.0 => "⁴"
+							case 5.0 => "⁵"
+							case 6.0 => "⁶"
+						})
 				}
 			}
 		}
