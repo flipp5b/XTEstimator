@@ -1,8 +1,9 @@
-package ru.miet.xtestimator
+package ru.miet.xtestimator.regex
 
 import org.scalatest.FunSuite
 import ru.miet.xtestimator.regex.{EmptyString, EmptySet, Literal, BatchAlternation}
 import BatchAlternation.Branch
+import ru.miet.xtestimator.StochasticVariable
 
 
 class RegexTest extends FunSuite {

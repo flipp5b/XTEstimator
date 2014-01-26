@@ -1,9 +1,10 @@
-package ru.miet.xtestimator
+package ru.miet.xtestimator.regex
 
 import org.scalatest.FunSuite
 import ru.miet.xtestimator.cfg.Cfg
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.regex.{RegexBuilder, Literal, BatchAlternation}
+import ru.miet.xtestimator.StochasticVariable
 
 
 class RegexBuilderTest extends FunSuite {

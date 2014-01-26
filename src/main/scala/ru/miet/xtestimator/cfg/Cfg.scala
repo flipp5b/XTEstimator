@@ -19,6 +19,8 @@ object Cfg {
 		def this(id: String, executionTime: StochasticVariable, loopBound: StochasticVariable) = this(id, executionTime, Some(loopBound))
 
 		def this(id: String, executionTime: StochasticVariable) = this(id, executionTime, None)
+
+		override def toString: String = id
 	}
 	object Vertex {
 		def apply(id: String, executionTime: StochasticVariable, loopBound: StochasticVariable): Vertex = new Vertex(id, executionTime, loopBound)
@@ -28,6 +30,8 @@ object Cfg {
 
 	case class Edge(source: Vertex, target: Vertex, probability: Double) {
 		def this(source: Vertex, target: Vertex) = this(source, target, 1)
+
+		override def toString: String = s"$source -> $target"
 	}
 	object Edge {
 		def apply(source: Vertex, target: Vertex): Edge = new Edge(source, target)
