@@ -1,9 +1,9 @@
 package ru.miet.xtestimator.regex
 
 import org.scalatest.FunSuite
-import ru.miet.xtestimator.regex.{EmptyString, EmptySet, Literal, BatchAlternation}
-import BatchAlternation.Branch
 import ru.miet.xtestimator.StochasticVariable
+
+import RegexImplicits._
 
 
 class RegexTest extends FunSuite {
@@ -46,7 +46,7 @@ class RegexTest extends FunSuite {
 		val adP = .7
 		val abP = .3
 
-		val regex = (a + b * Some(bB) + b + c) * Some(aB) + BatchAlternation((a, adP), (a + b * Some(bB) + b, abP)) + d
+		val regex = (a + b * bB + b + c) * aB + BatchAlternation((a, adP), (a + b * bB + b, abP)) + d
 		val actualExecutionTime = regex.estimate
 
 		val expectedExecutionTime = {

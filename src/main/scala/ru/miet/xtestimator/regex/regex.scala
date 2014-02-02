@@ -7,20 +7,16 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
 
 sealed abstract class Regex {
-	final def + (that: Regex): Regex = Concatenation(this, that)
-
-	final def * (loopBound: Option[StochasticVariable]): Regex = Repetition(Body(this, loopBound))
-
 	def simplify: Regex = this
 
 	final def estimate: StochasticVariable = simplify.estimateSimplified
 
-	protected[regex] def estimateSimplified: StochasticVariable
+	private[regex] def estimateSimplified: StochasticVariable
 }
 
 
-case class Literal(value: String, executionTime: StochasticVariable) extends Regex {
-	def estimateSimplified = executionTime
+final case class Literal(value: String, executionTime: StochasticVariable) extends Regex {
+	private[regex] def estimateSimplified = executionTime
 
 	override def toString: String = value
 }
@@ -31,20 +27,20 @@ object Literal {
 
 
 case object EmptySet extends Regex {
-	def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
+	private[regex] def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "Ø"
 }
 
 
 case object EmptyString extends Regex {
-	def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
+	private[regex] def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "ε"
 }
 
 
-case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
+final case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 	override def simplify: Regex = {
 		val simplifiedLhs = lhs.simplify
 		val simplifiedRhs = rhs.simplify
@@ -57,7 +53,7 @@ case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 		}
 	}
 
-	def estimateSimplified = {
+	private[regex] def estimateSimplified = {
 		val lhsExecutionTime = lhs.estimateSimplified
 		val rhsExecutionTime = rhs.estimateSimplified
 
@@ -68,7 +64,7 @@ case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 }
 
 
-case class BatchAlternation(branches: List[Branch]) extends Regex {
+final case class BatchAlternation(branches: List[Branch]) extends Regex {
 	override def simplify: Regex = {
 		val simplifiedArgs = branches map (b => b.copy(regex = b.regex.simplify)) filter (_.regex != EmptySet)
 		simplifiedArgs match {
@@ -78,7 +74,7 @@ case class BatchAlternation(branches: List[Branch]) extends Regex {
 		}
 	}
 
-	def estimateSimplified = {
+	private[regex] def estimateSimplified = {
 		val tmpExecutionTime = branches.foldLeft(StochasticVariable.Zero) {
 			(accumulator, branch) => {
 				val branchExecutionTime = branch.regex.estimateSimplified
@@ -103,7 +99,7 @@ object BatchAlternation {
 }
 
 
-case class Repetition(body: Body) extends Regex {
+final case class Repetition(body: Body) extends Regex {
 	override def simplify: Regex = {
 		val simplifiedRegex = body.regex.simplify
 		simplifiedRegex match {
@@ -113,7 +109,7 @@ case class Repetition(body: Body) extends Regex {
 		}
 	}
 
-	def estimateSimplified = {
+	private[regex] def estimateSimplified = {
 		body.loopBound match {
 			case Some(bound) =>
 				val bodyExecutionTime = body.regex.estimateSimplified

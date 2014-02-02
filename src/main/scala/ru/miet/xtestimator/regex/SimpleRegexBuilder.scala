@@ -4,6 +4,8 @@ import ru.miet.xtestimator.cfg.Cfg
 import ru.miet.xtestimator.cfg.Cfg.Vertex
 import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
+import RegexImplicits._
+
 
 class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 	def build: Regex = buildRegex(Set.empty, cfg.entry, cfg.exit) + Literal(cfg.exit)

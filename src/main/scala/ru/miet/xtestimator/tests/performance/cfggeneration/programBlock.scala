@@ -2,16 +2,24 @@ package ru.miet.xtestimator.tests.performance.cfggeneration
 
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.StochasticVariable
+import ru.miet.xtestimator.cfg.Cfg
+import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlock.Decomposition
 
 
 sealed abstract class ProgramBlock {
-	def decompose: Decomposition
+	def toCfg: Cfg = decompose.toCfg
+
+	private[cfggeneration] def decompose: Decomposition
 }
 
-final case class Decomposition(vertices: Set[Vertex], edges: Set[Edge], entry: Vertex, exit: Vertex)
+object ProgramBlock {
+	private[cfggeneration] final case class Decomposition(vertices: Set[Vertex], edges: Set[Edge], entry: Vertex, exit: Vertex) {
+		def toCfg: Cfg = Cfg(vertices, edges, entry, exit)
+	}
+}
 
 final case class BasicBlock(id: String) extends ProgramBlock{
-	def decompose: Decomposition = {
+	private[cfggeneration] def decompose: Decomposition = {
 		val v = Vertex(id, StochasticVariable.Zero)
 		Decomposition(Set(v), Set.empty, v, v)
 	}
@@ -20,7 +28,7 @@ final case class BasicBlock(id: String) extends ProgramBlock{
 final case class Sequence(steps: List[ProgramBlock]) extends ProgramBlock {
 	require(!steps.isEmpty)
 
-	def decompose: Decomposition = {
+	private[cfggeneration] def decompose: Decomposition = {
 		val stepDecompositions = steps map (_.decompose)
 
 		val stepEdges = stepDecompositions.foldLeft(Set.empty[Edge])((acc, d) => acc ++ d.edges)
@@ -38,7 +46,7 @@ final case class Sequence(steps: List[ProgramBlock]) extends ProgramBlock {
 final case class Branching(header: BasicBlock, branches: List[ProgramBlock], footer: BasicBlock) extends ProgramBlock {
 	require(branches.length > 1)
 
-	def decompose: Decomposition = {
+	private[cfggeneration] def decompose: Decomposition = {
 		val headerDecomposition = header.decompose
 		val branchDecompositions = branches map (_.decompose)
 		val footerDecomposition = footer.decompose
@@ -58,7 +66,7 @@ final case class Branching(header: BasicBlock, branches: List[ProgramBlock], foo
 }
 
 final case class Loop(header: BasicBlock, body: ProgramBlock) extends ProgramBlock {
-	def decompose: Decomposition = {
+	private[cfggeneration] def decompose: Decomposition = {
 		val headerDecomposition = header.decompose
 		val bodyDecomposition = body.decompose
 

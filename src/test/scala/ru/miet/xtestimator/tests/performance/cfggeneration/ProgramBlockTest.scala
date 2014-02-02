@@ -3,10 +3,11 @@ package ru.miet.xtestimator.tests.performance.cfggeneration
 import org.scalatest.FunSuite
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.StochasticVariable
+import ru.miet.xtestimator.cfg.Cfg
 
 
 class ProgramBlockTest extends FunSuite {
-	test("Program block is correctly decomposed") {
+	test("Program block is correctly converted to CFG") {
 		val programBlock = Sequence(List(
 			BasicBlock("A"),
 			Loop(BasicBlock("B"),
@@ -17,7 +18,7 @@ class ProgramBlockTest extends FunSuite {
 			),
 			BasicBlock("G")
 		))
-		val actualDecomposition = programBlock.decompose
+		val actualCfg = programBlock.toCfg
 
 		def vertex(id: String) = Vertex(id, StochasticVariable.Zero)
 		val a = vertex("A")
@@ -36,13 +37,13 @@ class ProgramBlockTest extends FunSuite {
 		val fb = Edge(f, b)
 		val bg = Edge(b, g)
 
-		val expectedDecomposition = Decomposition(
+		val expectedCfg = Cfg(
 			vertices = Set(a, b, c, d, e , f, g),
 			edges = Set(ab, bc, cd, ce, df, ef, fb, bg),
 			entry = a,
 			exit = g
 		)
 
-		assert(actualDecomposition == expectedDecomposition)
+		assert(actualCfg == expectedCfg)
 	}
 }
