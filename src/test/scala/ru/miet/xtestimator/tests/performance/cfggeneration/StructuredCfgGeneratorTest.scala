@@ -8,5 +8,8 @@ class StructuredCfgGeneratorTest extends FunSuite {
 		assert(StructuredCfgGenerator.place(16, 5) == List(0, 4, 4, 4, 4))
 		assert(StructuredCfgGenerator.place(3, 5) == List(0, 0, 1, 1, 1))
 		assert(StructuredCfgGenerator.place(0, 5) == List(0, 0, 0, 0, 0))
+		assert(StructuredCfgGenerator.place(1, 2) == List(0, 1))
+		assert(StructuredCfgGenerator.place(2, 2) == List(1, 1))
+		assert(StructuredCfgGenerator.place(3, 2) == List(1, 2))
 	}
 }

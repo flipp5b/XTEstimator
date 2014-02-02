@@ -4,6 +4,7 @@ import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 
 
 private[cfg] final class IncidenceListCfg(vertices: Set[Vertex], edges: Set[Edge], val entry: Vertex, val exit: Vertex) extends Cfg {
+	// TODO: validate input
 	private[this] val vertexToEdgesMap = edges groupBy (_.source)
 	private val vertexMap = vertices.map(v => (v, new InternalVertex(vertexToEdgesMap.getOrElse(v, Set.empty)))).toMap
 

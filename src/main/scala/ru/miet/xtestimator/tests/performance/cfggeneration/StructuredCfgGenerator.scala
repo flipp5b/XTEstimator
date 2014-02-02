@@ -9,10 +9,14 @@ import StructuredCfgGenerator._
 class StructuredCfgGenerator(val sequenceLength: Int, val branchCount: Int) extends CfgGenerator {
 	override def generate(controlStructureCount: Int): Cfg = {
 		require(controlStructureCount >= 0)
-		generateProgramBlock(controlStructureCount).toCfg
+
+		val entry = BasicBlock.generate
+		val body = generateProgramBlock(controlStructureCount)
+		val exit = BasicBlock.generate
+		Sequence(List(entry, body, exit)).toCfg
 	}
 
-	private def generateProgramBlock(controlStructureCount: Int): ProgramBlock = controlStructureCount match {
+	def generateProgramBlock(controlStructureCount: Int): ProgramBlock = controlStructureCount match {
 		case 0 => BasicBlock.generate
 		case _ => selectAny(
 			() => generateSequence(controlStructureCount - 1),
@@ -38,15 +42,22 @@ object StructuredCfgGenerator {
 
 	private[cfggeneration] def place(elementsCount: Int, placeCount: Int) = {
 		require(elementsCount >= 0)
+		// TODO: refactor
 		val nonEmptyPlaces = if (elementsCount > 0) {
-			val uniformPlaceCount = Math.min(elementsCount, placeCount - 1)
-
-			val uniformPlaces = List.fill(uniformPlaceCount)(elementsCount / uniformPlaceCount)
-			val remainderPlace = {
-				val remainder = elementsCount % uniformPlaceCount
-				if (remainder != 0) List(remainder) else Nil
+			if (placeCount == 2) {
+				val integralPart = elementsCount / placeCount
+				List(integralPart, elementsCount - integralPart)
 			}
-			remainderPlace ::: uniformPlaces
+			else {
+				val uniformPlaceCount = Math.min(elementsCount, placeCount - 1)
+
+				val uniformPlaces = List.fill(uniformPlaceCount)(elementsCount / uniformPlaceCount)
+				val remainderPlace = {
+					val remainder = elementsCount % uniformPlaceCount
+					if (remainder != 0) List(remainder) else Nil
+				}
+				remainderPlace ::: uniformPlaces
+			}
 		}
 		else {
 			Nil
