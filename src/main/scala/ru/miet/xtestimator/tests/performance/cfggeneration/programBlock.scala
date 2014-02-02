@@ -25,6 +25,18 @@ final case class BasicBlock(id: String) extends ProgramBlock{
 	}
 }
 
+object BasicBlock {
+	def generate: BasicBlock = BasicBlock(IdGenerator.nextId())
+
+	private object IdGenerator {
+		private var id = -1
+		def nextId(): String = {
+			id += 1
+			id.toString
+		}
+	}
+}
+
 final case class Sequence(steps: List[ProgramBlock]) extends ProgramBlock {
 	require(!steps.isEmpty)
 

@@ -1,7 +1,57 @@
 package ru.miet.xtestimator.tests.performance.cfggeneration
 
 import ru.miet.xtestimator.cfg.Cfg
+import scala.util.Random
 
-class StructuredCfgGenerator extends CfgGenerator {
-	def generate: Cfg = ???
+import StructuredCfgGenerator._
+
+
+class StructuredCfgGenerator(val sequenceLength: Int, val branchCount: Int) extends CfgGenerator {
+	override def generate(controlStructureCount: Int): Cfg = {
+		require(controlStructureCount >= 0)
+		generateProgramBlock(controlStructureCount).toCfg
+	}
+
+	private def generateProgramBlock(controlStructureCount: Int): ProgramBlock = controlStructureCount match {
+		case 0 => BasicBlock.generate
+		case _ => selectAny(
+			() => generateSequence(controlStructureCount - 1),
+			() => generateBranching(controlStructureCount - 1),
+			() => generateLoop(controlStructureCount - 1)
+		)
+	}
+
+	private def generateSequence(controlStructureCount: Int) =
+		Sequence(generateProgramBlockList(controlStructureCount, sequenceLength))
+
+	private def generateBranching(controlStructureCount: Int) =
+		Branching(BasicBlock.generate, generateProgramBlockList(controlStructureCount, branchCount), BasicBlock.generate)
+
+	private def generateProgramBlockList(controlStructureCount: Int, maxLength: Int) =
+		for (count <- place(controlStructureCount, maxLength)) yield generateProgramBlock(count)
+
+	private def generateLoop(controlStructureCount: Int) = Loop(BasicBlock.generate, generateProgramBlock(controlStructureCount))
+}
+
+object StructuredCfgGenerator {
+	private[cfggeneration] def selectAny(options: (() => ProgramBlock)*) = options(Random.nextInt(options.length))()
+
+	private[cfggeneration] def place(elementsCount: Int, placeCount: Int) = {
+		require(elementsCount >= 0)
+		val nonEmptyPlaces = if (elementsCount > 0) {
+			val uniformPlaceCount = Math.min(elementsCount, placeCount - 1)
+
+			val uniformPlaces = List.fill(uniformPlaceCount)(elementsCount / uniformPlaceCount)
+			val remainderPlace = {
+				val remainder = elementsCount % uniformPlaceCount
+				if (remainder != 0) List(remainder) else Nil
+			}
+			remainderPlace ::: uniformPlaces
+		}
+		else {
+			Nil
+		}
+
+		List.fill(placeCount - nonEmptyPlaces.length)(0) ::: nonEmptyPlaces
+	}
 }
