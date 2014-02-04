@@ -5,11 +5,15 @@ import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 
 
 trait Cfg {
+	def vertices: Set[Vertex]
+
+	def edges: Set[Edge]
+
 	def entry: Vertex
 
 	def exit: Vertex
 
-	def getIncidentEdges(vertex: Vertex): Set[Edge]
+	def getIncidentEdges(vertex: Vertex): Seq[Edge]
 }
 
 object Cfg {

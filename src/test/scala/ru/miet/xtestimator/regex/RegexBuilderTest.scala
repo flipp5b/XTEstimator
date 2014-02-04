@@ -6,6 +6,7 @@ import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.StochasticVariable
 
 import RegexImplicits._
+import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
 
 class RegexBuilderTest extends FunSuite {
@@ -54,7 +55,7 @@ class RegexBuilderTest extends FunSuite {
 		val c = Literal(vC)
 		val d = Literal(vD)
 		val expectedRegex = (a + (b * vB.loopBound + (b + c))) * vA.loopBound +
-			BatchAlternation((a, eAD.probability), (a + (b * vB.loopBound + b), eAB.probability)) + d
+			BatchAlternation(Seq(Branch(a, eAD.probability), Branch(a + (b * vB.loopBound + b), eAB.probability))) + d
 
 		assert(expectedRegex == actualRegex)
 	}

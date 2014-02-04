@@ -4,6 +4,7 @@ import org.scalatest.FunSuite
 import ru.miet.xtestimator.StochasticVariable
 
 import RegexImplicits._
+import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
 
 class RegexTest extends FunSuite {
@@ -30,7 +31,7 @@ class RegexTest extends FunSuite {
 	}
 
 	test("Complex regex is correctly simplified") {
-		val regex = BatchAlternation(((a + EmptySet) * None, 0.5), (EmptySet, 0.5)).simplify
+		val regex = BatchAlternation(Seq(Branch((a + EmptySet) * None, 0.5), Branch(EmptySet, 0.5))).simplify
 		assert(regex == EmptyString)
 	}
 
@@ -46,7 +47,7 @@ class RegexTest extends FunSuite {
 		val adP = .7
 		val abP = .3
 
-		val regex = (a + b * bB + b + c) * aB + BatchAlternation((a, adP), (a + b * bB + b, abP)) + d
+		val regex = (a + b * bB + b + c) * aB + BatchAlternation(Seq(Branch(a, adP), Branch(a + b * bB + b, abP))) + d
 		val actualExecutionTime = regex.estimate
 
 		val expectedExecutionTime = {

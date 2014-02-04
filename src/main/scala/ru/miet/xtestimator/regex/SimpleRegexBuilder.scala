@@ -11,20 +11,19 @@ class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 	def build: Regex = buildRegex(Set.empty, cfg.entry, cfg.exit) + Literal(cfg.exit)
 
 	private def buildRegex(forbiddenSet: Set[Vertex], source: Vertex, target: Vertex): Regex = {
-		val loopPart = buildRegexPart(forbiddenSet, source, source) * source.loopBound
-		val directPart = buildRegexPart(forbiddenSet, source, target)
+		val newForbiddenSet = forbiddenSet + source
+		val loopPart = buildRegexPart(newForbiddenSet, source, source) * source.loopBound
+		val directPart = buildRegexPart(newForbiddenSet, source, target)
 		loopPart + directPart
 	}
 
 	private def buildRegexPart(forbiddenSet: Set[Vertex], source: Vertex, target: Vertex): Regex = {
-		val newForbiddenSet = forbiddenSet + source
-
 		val branches = for {
-			edge <- cfg.getIncidentEdges(source).toList
+			edge <- cfg.getIncidentEdges(source)
 			neighbor = edge.target
-			if (neighbor == target) || !(newForbiddenSet contains neighbor)
+			if (neighbor == target) || !(forbiddenSet contains neighbor)
 		} yield {
-			val tail = if (neighbor == target) EmptyString else buildRegex(newForbiddenSet, neighbor, target)
+			val tail = if (neighbor == target) EmptyString else buildRegex(forbiddenSet, neighbor, target)
 			Branch(Literal(source) + tail, edge.probability)
 		}
 

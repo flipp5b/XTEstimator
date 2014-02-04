@@ -64,12 +64,12 @@ final case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 }
 
 
-final case class BatchAlternation(branches: List[Branch]) extends Regex {
+final case class BatchAlternation(branches: Seq[Branch]) extends Regex {
 	override def simplify: Regex = {
 		val simplifiedArgs = branches map (b => b.copy(regex = b.regex.simplify)) filter (_.regex != EmptySet)
 		simplifiedArgs match {
-			case Nil => EmptySet
-			case head :: Nil => head.regex
+			case Seq() => EmptySet
+			case Seq(head) => head.regex
 			case _ => BatchAlternation(simplifiedArgs)
 		}
 	}
@@ -91,8 +91,6 @@ final case class BatchAlternation(branches: List[Branch]) extends Regex {
 }
 
 object BatchAlternation {
-	def apply(args: Pair[Regex, Double]*): BatchAlternation = new BatchAlternation(args.toList map (p => Branch(p._1, p._2)))
-
 	case class Branch(regex: Regex, probability: Double) {
 		override def toString: String = regex.toString
 	}
