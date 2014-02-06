@@ -42,14 +42,12 @@ case object EmptyString extends Regex {
 
 final case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 	override def simplify: Regex = {
-		val simplifiedLhs = lhs.simplify
-		val simplifiedRhs = rhs.simplify
-		(simplifiedLhs, simplifiedRhs) match {
+		(lhs, rhs) match {
 			case (EmptySet, _) => EmptySet
 			case (_, EmptySet) => EmptySet
 			case (EmptyString, r) => r
 			case (r, EmptyString) => r
-			case _ => Concatenation(simplifiedLhs, simplifiedRhs)
+			case _ => this
 		}
 	}
 
@@ -66,11 +64,11 @@ final case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 
 final case class BatchAlternation(branches: Seq[Branch]) extends Regex {
 	override def simplify: Regex = {
-		val simplifiedArgs = branches map (b => b.copy(regex = b.regex.simplify)) filter (_.regex != EmptySet)
-		simplifiedArgs match {
+		val filteredBranches = branches filter (_.regex != EmptySet)
+		filteredBranches match {
 			case Seq() => EmptySet
 			case Seq(head) => head.regex
-			case _ => BatchAlternation(simplifiedArgs)
+			case _ => BatchAlternation(filteredBranches)
 		}
 	}
 
@@ -99,11 +97,10 @@ object BatchAlternation {
 
 final case class Repetition(body: Body) extends Regex {
 	override def simplify: Regex = {
-		val simplifiedRegex = body.regex.simplify
-		simplifiedRegex match {
-			case (EmptySet) => EmptyString
-			case (EmptyString) => EmptyString
-			case _ => Repetition(body.copy(regex = simplifiedRegex))
+		body.regex match {
+			case EmptySet => EmptyString
+			case EmptyString => EmptyString
+			case _ => this
 		}
 	}
 
