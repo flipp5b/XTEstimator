@@ -6,6 +6,6 @@ trait RegexBuilder {
 	def build: Regex
 }
 
-object RegexBuilder {
-	def apply(cfg: Cfg): RegexBuilder = new SimpleRegexBuilder(cfg)
+object RegexBuilder extends RegexBuilderFactory {
+	def apply(cfg: Cfg): RegexBuilder = new RegexBuilderWithTransitiveClosure(cfg)
 }

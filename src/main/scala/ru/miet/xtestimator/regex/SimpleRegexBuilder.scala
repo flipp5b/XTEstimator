@@ -30,3 +30,9 @@ class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 		if (branches.isEmpty) EmptySet else BatchAlternation(branches)
 	}
 }
+
+object SimpleRegexBuilder extends RegexBuilderFactory {
+	override def apply(cfg: Cfg): RegexBuilder = new SimpleRegexBuilder(cfg)
+
+	override def toString: String = "SimpleRegexBuilder"
+}
