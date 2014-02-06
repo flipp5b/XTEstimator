@@ -6,14 +6,22 @@ import scala.util.Random
 import StructuredCfgGenerator._
 
 
-class StructuredCfgGenerator(val sequenceLength: Int, val branchCount: Int) extends CfgGenerator {
+class StructuredCfgGenerator(sequenceLength: Int, branchCount: Int, cache: StructuredCfgGeneratorCache) extends CfgGenerator {
 	override def generate(controlStructureCount: Int): Cfg = {
 		require(controlStructureCount >= 0)
 
-		val entry = BasicBlock.generate
-		val body = generateProgramBlock(controlStructureCount)
-		val exit = BasicBlock.generate
-		Sequence(List(entry, body, exit)).toCfg
+		val config = ProgramBlockConfiguration(sequenceLength, branchCount, controlStructureCount)
+		cache get config match {
+			case Some(programBlock) => programBlock.toCfg
+			case None =>
+				val entry = BasicBlock.generate
+				val body = generateProgramBlock(controlStructureCount)
+				val exit = BasicBlock.generate
+				val programBlock = Sequence(List(entry, body, exit))
+				cache.put(config, programBlock)
+
+				programBlock.toCfg
+		}
 	}
 
 	def generateProgramBlock(controlStructureCount: Int): ProgramBlock = controlStructureCount match {

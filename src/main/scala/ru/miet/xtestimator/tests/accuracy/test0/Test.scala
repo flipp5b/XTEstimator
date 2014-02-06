@@ -14,7 +14,7 @@ import org.jfree.ui.RectangleEdge
 
 
 object Test {
-	def main(args: Array[String]) {
+	def main(args: Array[String]): Unit = {
 		Locale.setDefault(new Locale("ru"))
 
 		BenchmarkData.load()
@@ -23,7 +23,7 @@ object Test {
 		BenchmarkData.save()
 	}
 
-	private def testSeries(loopBound: Double, scaleFactor: Double, unitOfMeasure: String) {
+	private def testSeries(loopBound: Double, scaleFactor: Double, unitOfMeasure: String): Unit = {
 		val testInfoSeq = Seq(
 			test(Configuration(StochasticVariable(loopBound, 0), 0.7)),
 			test(Configuration(StochasticVariable.withMeanAndStd(loopBound, loopBound / 100), 0.7)),

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import java.io.File
 
 
+// TODO: implement AutoClosable and use loan pattern
 object BenchmarkData {
 	var forceBenchmarking: Boolean = false
 	private val historyFile = new File("history.bmk")
@@ -54,7 +55,7 @@ object BenchmarkData {
 			private var n: Double = .0
 			private var v: Double = .0
 			private var i: Int = 0
-			def run() {
+			def run(): Unit = {
 				val rand: Random = new Random
 				n = rand.nextGaussian * 0 + 1000
 				v = 0
@@ -68,7 +69,7 @@ object BenchmarkData {
 			private val i: Int = 42
 			private val nE: Double = 2000
 			private var b: Boolean = false
-			def run() {
+			def run(): Unit = {
 				b = i < nE
 			}
 			override def toString: String = s"b=$b"
@@ -79,7 +80,7 @@ object BenchmarkData {
 			private val rand: Random = new Random
 			private val trueBranchProbability: Double = .5
 			private var b: Boolean = false
-			def run() {
+			def run(): Unit = {
 				b = rand.nextDouble <= trueBranchProbability
 			}
 			override def toString: String = s"b=$b"
@@ -88,7 +89,7 @@ object BenchmarkData {
 	private def trueBranch =
 		new Benchmark("True-branch", new Runnable {
 			private var v: Double = 1.1
-			def run() {
+			def run(): Unit = {
 				v += Math.pow(v, 2)
 			}
 			override def toString: String = s"v=$v"
@@ -97,7 +98,7 @@ object BenchmarkData {
 	private def falseBranch =
 		new Benchmark("False-branch", new Runnable {
 			private var v: Double = 1.1
-			def run() {
+			def run(): Unit = {
 				v += Math.log(v)
 			}
 			override def toString: String = s"v=$v"
@@ -107,7 +108,7 @@ object BenchmarkData {
 	private def loopFooter =
 		new Benchmark("Loop footer", new Runnable {
 			private var i: Int = 42
-			def run() {
+			def run(): Unit = {
 				i += 1
 			}
 			override def toString: String = s"i=$i"
@@ -122,7 +123,7 @@ object BenchmarkData {
 			private val trueBranchProbability: Double = config.trueBranchProbability
 			private var v: Double = .0
 
-			def run() {
+			def run(): Unit = {
 				val rand: Random = new Random
 				val n: Double = rand.nextGaussian * nStd + nE
 				v = 1.1
