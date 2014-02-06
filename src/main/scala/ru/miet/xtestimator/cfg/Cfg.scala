@@ -14,6 +14,8 @@ trait Cfg {
 	def exit: Vertex
 
 	def getIncidentEdges(vertex: Vertex): Seq[Edge]
+
+	def isAdjacent(i: Vertex, j: Vertex): Boolean
 }
 
 object Cfg {
