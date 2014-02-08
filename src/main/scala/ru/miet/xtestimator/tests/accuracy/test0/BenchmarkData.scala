@@ -10,7 +10,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import java.io.File
 
 
-// TODO: implement AutoClosable and use loan pattern
+// TODO: extend MemorizedBenchmark
 object BenchmarkData {
 	var forceBenchmarking: Boolean = false
 	private val historyFile = new File("history.bmk")

@@ -13,25 +13,25 @@ class RegexTest extends FunSuite {
 	val c = Literal("c", StochasticVariable(0, 0))
 
 	test("Concatenation with EmptySet is correctly simplified") {
-		assert((a + EmptySet).simplify == EmptySet)
-		assert((EmptySet + a).simplify == EmptySet)
+		assert(a + EmptySet == EmptySet)
+		assert(EmptySet + a == EmptySet)
 	}
 
 	test("Concatenation with EmptyString is correctly simplified") {
-		assert((a + EmptyString).simplify == a)
-		assert((EmptyString + a).simplify == a)
+		assert(a + EmptyString == a)
+		assert(EmptyString + a == a)
 	}
 
 	test("Repetition with EmptySet is correctly simplified") {
-		assert((EmptySet * None).simplify == EmptyString)
+		assert(EmptySet * None == EmptyString)
 	}
 
 	test("Repetition with EmptyString is correctly simplified") {
-		assert((EmptyString * None).simplify == EmptyString)
+		assert(EmptyString * None == EmptyString)
 	}
 
 	test("Complex regex is correctly simplified") {
-		val regex = BatchAlternation(Seq(Branch((a + EmptySet) * None, 0.5), Branch(EmptySet, 0.5))).simplify
+		val regex = Seq(Branch((a + EmptySet) * None, 0.5), Branch(EmptySet, 0.5)).alternate
 		assert(regex == EmptyString)
 	}
 
@@ -47,7 +47,7 @@ class RegexTest extends FunSuite {
 		val adP = .7
 		val abP = .3
 
-		val regex = (a + b * bB + b + c) * aB + BatchAlternation(Seq(Branch(a, adP), Branch(a + b * bB + b, abP))) + d
+		val regex = (a + b * bB + b + c) * aB + Seq(Branch(a, adP), Branch(a + b * bB + b, abP)).alternate + d
 		val actualExecutionTime = regex.estimate
 
 		val expectedExecutionTime = {

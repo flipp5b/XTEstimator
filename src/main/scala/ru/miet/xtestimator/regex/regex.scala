@@ -9,14 +9,12 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 sealed abstract class Regex {
 	def simplify: Regex = this
 
-	final def estimate: StochasticVariable = simplify.estimateSimplified
-
-	private[regex] def estimateSimplified: StochasticVariable
+	def estimate: StochasticVariable
 }
 
 
 final case class Literal(value: String, executionTime: StochasticVariable) extends Regex {
-	private[regex] def estimateSimplified = executionTime
+	override def estimate: StochasticVariable = executionTime
 
 	override def toString: String = value
 }
@@ -27,14 +25,14 @@ object Literal {
 
 
 case object EmptySet extends Regex {
-	private[regex] def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
+	override def estimate: StochasticVariable = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "Ø"
 }
 
 
 case object EmptyString extends Regex {
-	private[regex] def estimateSimplified = StochasticVariable.Zero // TODO: this may be incorrect
+	override def estimate: StochasticVariable = StochasticVariable.Zero // TODO: this may be incorrect
 
 	override def toString: String = "ε"
 }
@@ -51,9 +49,9 @@ final case class Concatenation(lhs: Regex, rhs: Regex) extends Regex {
 		}
 	}
 
-	private[regex] def estimateSimplified = {
-		val lhsExecutionTime = lhs.estimateSimplified
-		val rhsExecutionTime = rhs.estimateSimplified
+	override def estimate: StochasticVariable = {
+		val lhsExecutionTime = lhs.estimate
+		val rhsExecutionTime = rhs.estimate
 
 		lhsExecutionTime + rhsExecutionTime
 	}
@@ -72,10 +70,10 @@ final case class BatchAlternation(branches: Seq[Branch]) extends Regex {
 		}
 	}
 
-	private[regex] def estimateSimplified = {
+	override def estimate: StochasticVariable = {
 		val tmpExecutionTime = branches.foldLeft(StochasticVariable.Zero) {
 			(accumulator, branch) => {
-				val branchExecutionTime = branch.regex.estimateSimplified
+				val branchExecutionTime = branch.regex.estimate
 				val m = branch.probability * branchExecutionTime.mean
 				val v = branch.probability * (branchExecutionTime.variance + Math.pow(branchExecutionTime.mean, 2))
 
@@ -104,10 +102,10 @@ final case class Repetition(body: Body) extends Regex {
 		}
 	}
 
-	private[regex] def estimateSimplified = {
+	override def estimate: StochasticVariable = {
 		body.loopBound match {
 			case Some(bound) =>
-				val bodyExecutionTime = body.regex.estimateSimplified
+				val bodyExecutionTime = body.regex.estimate
 				val m = bodyExecutionTime.mean * bound.mean
 				val v = bodyExecutionTime.variance * bound.mean + Math.pow(bodyExecutionTime.mean, 2) * bound.variance
 				StochasticVariable(m, v)

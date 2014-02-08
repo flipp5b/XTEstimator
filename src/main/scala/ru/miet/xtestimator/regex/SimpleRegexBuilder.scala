@@ -27,7 +27,7 @@ class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 			Branch(Literal(source) + tail, edge.probability)
 		}
 
-		if (branches.isEmpty) EmptySet else BatchAlternation(branches)
+		if (branches.isEmpty) EmptySet else branches.alternate
 	}
 }
 

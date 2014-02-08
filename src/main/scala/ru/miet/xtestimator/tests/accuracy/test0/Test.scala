@@ -3,7 +3,7 @@ package ru.miet.xtestimator.tests.accuracy.test0
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.StochasticVariable
 import ru.miet.xtestimator.cfg.Cfg
-import ru.miet.xtestimator.regex.RegexBuilder
+import ru.miet.xtestimator.regex.SimpleRegexBuilder
 import scalax.chart._
 import scalax.chart.Charting._
 import org.jfree.chart.StandardChartTheme
@@ -14,6 +14,8 @@ import org.jfree.ui.RectangleEdge
 
 
 object Test {
+	private val regexBuilderFactory = SimpleRegexBuilder
+
 	def main(args: Array[String]): Unit = {
 		Locale.setDefault(new Locale("ru"))
 
@@ -75,7 +77,7 @@ object Test {
 		val bg = Edge(b, g)
 
 		val cfg = Cfg(Set(a, b, c, d, e, f, g), Set(ab, bc, cd, ce, df, ef, fb, bg), a, g)
-		val regex = RegexBuilder(cfg).build
+		val regex = regexBuilderFactory(cfg).build
 
 		regex.estimate
 	}
