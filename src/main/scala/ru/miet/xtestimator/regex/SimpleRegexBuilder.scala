@@ -34,5 +34,9 @@ class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 object SimpleRegexBuilder extends RegexBuilderFactory {
 	override def apply(cfg: Cfg): RegexBuilder = new SimpleRegexBuilder(cfg)
 
-	override def toString: String = "SimpleRegexBuilder"
+	override def builderId: String = "SimpleRegexBuilder"
+
+	override def builderDescription: String = "Стандартный алгоритм построения"
+
+	override def toString: String = builderId
 }

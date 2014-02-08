@@ -5,7 +5,6 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 import ru.miet.xtestimator.cfg.Cfg
 
 import RegexImplicits._
-import scala.collection.immutable.VectorBuilder
 
 
 class RegexBuilderWithTransitiveClosure(cfg: Cfg) extends RegexBuilder {
@@ -41,7 +40,11 @@ class RegexBuilderWithTransitiveClosure(cfg: Cfg) extends RegexBuilder {
 object RegexBuilderWithTransitiveClosure extends RegexBuilderFactory {
 	override def apply(cfg: Cfg): RegexBuilder = new RegexBuilderWithTransitiveClosure(cfg)
 
-	override def toString: String = "RegexBuilderWithTransitiveClosure"
+	override def builderId: String = "RegexBuilderWithTransitiveClosure"
+
+	override def builderDescription: String = "Алгоритм построения с транзитивным замыканием"
+
+	override def toString: String = builderId
 }
 
 

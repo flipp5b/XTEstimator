@@ -2,29 +2,41 @@ package ru.miet.xtestimator.tests.performance.test0
 
 import java.util.Locale
 import ru.miet.xtestimator.StochasticVariable
-import ru.miet.xtestimator.tests.Benchmark
+import ru.miet.xtestimator.tests.{MemorizedBenchmark, Benchmark}
 import ru.miet.xtestimator.regex._
 import ru.miet.utils.Loan._
 import ru.miet.xtestimator.tests.performance.cfggeneration.{StructuredCfgGenerator, StructuredCfgGeneratorCache}
 import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlockConfiguration
+import java.io.File
+import scalax.chart._
+import scalax.chart.Charting._
+import java.awt.Font
+import org.jfree.chart.StandardChartTheme
+import org.jfree.chart.renderer.xy.XYSplineRenderer
 
 
 object Test {
 	def main(args: Array[String]): Unit = {
 		Locale.setDefault(new Locale("ru"))
 
-		val configurations = Seq(
-			TestConfiguration(ProgramBlockConfiguration(sequenceLength = 4, branchCount = 2, controlStructureCount = 3), RegexBuilderWithTransitiveClosure)
-		)
+		def createConfigurationGroup(controlStructureCount: Int) = {
+			val programBlockConfiguration = ProgramBlockConfiguration(sequenceLength = 4, branchCount = 2, controlStructureCount)
+			Seq(
+				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
+				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
+		}
+		val configurations = (1 to 10 by 3) flatMap createConfigurationGroup
 
-		val benchmarkResults = loan (new StructuredCfgGeneratorCache) to {
-			cache => configurations map (benchmark(_, cache))
+		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
+			benchmark => loan (new StructuredCfgGeneratorCache) to {
+				cache => for (config <- configurations) yield benchmark(config.toSerializable, benchmarkFactory(config, cache))
+			}
 		}
 
 		visualize(configurations zip benchmarkResults)
 	}
 
-	private def benchmark(config: TestConfiguration, cache: StructuredCfgGeneratorCache) = {
+	private def benchmarkFactory(config: TestConfiguration, cache: StructuredCfgGeneratorCache) = {
 		val cfgGenerator = new StructuredCfgGenerator(config.programBlockConfig.sequenceLength, config.programBlockConfig.branchCount, cache)
 		val cfg = cfgGenerator.generate(config.programBlockConfig.controlStructureCount)
 
@@ -35,12 +47,62 @@ object Test {
 				r = regexBuilder.build
 			}
 			override def toString: String = r.toString
-		}).getExecutionTime
+		})
 	}
 
-	private def visualize(testInfoSeq: Seq[(TestConfiguration, StochasticVariable)]) = {
-		testInfoSeq foreach (println(_))
+	private def visualize(configurationsAndBenchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = {
+		val benchmarkResultSeries = configurationsAndBenchmarkResults.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
+			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime.mean / 1e6) })
+		ChartBuilder("Время построения РВ по ГПУ", benchmarkResultSeries).show()
 	}
 
-	private case class TestConfiguration(programBlockConfig: ProgramBlockConfiguration, regexBuilderFactory: RegexBuilderFactory)
+	private case class TestConfiguration(programBlockConfig: ProgramBlockConfiguration, regexBuilderFactory: RegexBuilderFactory) {
+		def toSerializable =
+			SerializableTestConfiguration(
+				programBlockConfig.sequenceLength,
+				programBlockConfig.branchCount,
+				programBlockConfig.controlStructureCount,
+				regexBuilderFactory.builderId)
+	}
+
+	private case class SerializableTestConfiguration(sequenceLength: Int, branchCount: Int, controlStructureCount: Int, regexBuilderId: String)
+
+	private object ChartBuilder {
+		def apply(title: String, benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
+			val chart = ChartFactories.XYLineChart(
+				createDataSet(benchmarkResultSeries),
+				title = title,
+				domainAxisLabel = "Количество управляющих конструкций",
+				rangeAxisLabel = "Время построения, мс",
+				legend = true,
+				tooltips = true)(theme)
+
+			chart.plot.setRenderer(new XYSplineRenderer)
+
+			chart
+		}
+		
+		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
+			val xySeries = benchmarkResultSeries.map { case (builderId, results) => results.toXYSeries(builderId) }
+			xySeries.toXYSeriesCollection
+		}
+
+		private val theme = {
+			def font(name: String, pattern: Font) = new Font(name, pattern.getStyle, pattern.getSize)
+
+			val theme = StandardChartTheme.createJFreeTheme().asInstanceOf[StandardChartTheme]
+			val oldExtraLargeFont = theme.getExtraLargeFont
+			val oldLargeFont = theme.getLargeFont
+			val oldRegularFont = theme.getRegularFont
+			val oldSmallFont = theme.getSmallFont
+
+			val newFontName = "DejaVu Sans"
+			theme.setExtraLargeFont(font(newFontName, oldExtraLargeFont))
+			theme.setLargeFont(font(newFontName, oldLargeFont))
+			theme.setRegularFont(font(newFontName, oldRegularFont))
+			theme.setSmallFont(font(newFontName, oldSmallFont))
+
+			theme
+		}
+	}
 }
