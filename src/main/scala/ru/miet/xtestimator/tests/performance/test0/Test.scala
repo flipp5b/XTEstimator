@@ -12,7 +12,7 @@ import scalax.chart._
 import scalax.chart.Charting._
 import java.awt.Font
 import org.jfree.chart.StandardChartTheme
-import org.jfree.chart.renderer.xy.XYSplineRenderer
+import org.jfree.chart.renderer.xy.DeviationRenderer
 
 
 object Test {
@@ -25,7 +25,7 @@ object Test {
 				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
 				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
 		}
-		val configurations = (1 to 10 by 3) flatMap createConfigurationGroup
+		val configurations = (1 to 25 by 3) flatMap createConfigurationGroup
 
 		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
 			benchmark => loan (new StructuredCfgGeneratorCache) to {
@@ -52,7 +52,7 @@ object Test {
 
 	private def visualize(configurationsAndBenchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = {
 		val benchmarkResultSeries = configurationsAndBenchmarkResults.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
-			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime.mean / 1e6) })
+			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime * 1e-6) })
 		ChartBuilder("Время построения РВ по ГПУ", benchmarkResultSeries).show()
 	}
 
@@ -68,7 +68,7 @@ object Test {
 	private case class SerializableTestConfiguration(sequenceLength: Int, branchCount: Int, controlStructureCount: Int, regexBuilderId: String)
 
 	private object ChartBuilder {
-		def apply(title: String, benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
+		def apply(title: String, benchmarkResultSeries: Map[String, Seq[(Int, StochasticVariable)]]) = {
 			val chart = ChartFactories.XYLineChart(
 				createDataSet(benchmarkResultSeries),
 				title = title,
@@ -77,14 +77,18 @@ object Test {
 				legend = true,
 				tooltips = true)(theme)
 
-			chart.plot.setRenderer(new XYSplineRenderer)
+			chart.plot.setRenderer(new DeviationRenderer())
 
 			chart
 		}
 		
-		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
-			val xySeries = benchmarkResultSeries.map { case (builderId, results) => results.toXYSeries(builderId) }
-			xySeries.toXYSeriesCollection
+		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, StochasticVariable)]]) = {
+			def expandResult(result: (Int, StochasticVariable)) = {
+				val (x, y) = result
+				(x, y.mean, y.mean - 3 * y.stdDeviation, y.mean + 3 * y.stdDeviation)
+			}
+			val series = benchmarkResultSeries.map { case (builderId, results) => results.map(expandResult).toYIntervalSeries(builderId) }
+			series.toYIntervalSeriesCollection
 		}
 
 		private val theme = {

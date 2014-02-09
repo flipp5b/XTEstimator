@@ -4,3 +4,6 @@ target/
 # IDE-specific files
 .idea/
 *.iml
+
+# Temporary source files
+*_tmp.scala

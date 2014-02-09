@@ -62,4 +62,84 @@
 }, {
   "mean" : 8017986.138932294,
   "variance" : 9.841382915556287E10
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 13,
+  "regexBuilderId" : "SimpleRegexBuilder"
+}, {
+  "mean" : 7.5619591459375E7,
+  "variance" : 2.996137956671435E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 13,
+  "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 3.7527489262499996E7,
+  "variance" : 2.9909084698632526E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 16,
+  "regexBuilderId" : "SimpleRegexBuilder"
+}, {
+  "mean" : 2.0408216302343752E7,
+  "variance" : 3.524317496466584E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 16,
+  "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 2.3478439550520845E7,
+  "variance" : 3.054131356794757E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 19,
+  "regexBuilderId" : "SimpleRegexBuilder"
+}, {
+  "mean" : 9.486127123016666E9,
+  "variance" : 3.678894509210575E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 19,
+  "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1.9464911871000004E9,
+  "variance" : 1.1586385295247111E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 22,
+  "regexBuilderId" : "SimpleRegexBuilder"
+}, {
+  "mean" : 4.480981311666668E9,
+  "variance" : 2.4235544858697445E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 22,
+  "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 5.022705725104168E7,
+  "variance" : 1.5682901450490512E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 25,
+  "regexBuilderId" : "SimpleRegexBuilder"
+}, {
+  "mean" : 1.983783627481667E10,
+  "variance" : 1.2225661319553792E15
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 25,
+  "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 6.568032505729167E7,
+  "variance" : 1.0274364169353387E11
 } ] ]
