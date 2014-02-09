@@ -8,7 +8,7 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 
-class MemorizedBenchmark[K : Manifest](val historyFile: File, val forceBenchmarking: Boolean = false) extends AutoCloseable {
+class MemorizedBenchmark[K : Manifest](val historyFile: File) extends AutoCloseable {
 	private val mapper = initMapper
 	private val history = initHistory
 
@@ -33,7 +33,7 @@ class MemorizedBenchmark[K : Manifest](val historyFile: File, val forceBenchmark
 
 	override def close(): Unit = mapper.writeValue(historyFile, history.toList)
 
-	def apply(key: K, benchmarkFactory: => Benchmark): StochasticVariable =
+	def apply(key: K, benchmarkFactory: => Benchmark, forceBenchmarking: Boolean = false): StochasticVariable =
 		if (forceBenchmarking || !(history contains key)) {
 			val benchmark = benchmarkFactory
 			println(benchmark)

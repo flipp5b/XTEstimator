@@ -5,7 +5,7 @@ import ru.miet.xtestimator.StochasticVariable
 import ru.miet.xtestimator.tests.{MemorizedBenchmark, Benchmark}
 import ru.miet.xtestimator.regex._
 import ru.miet.utils.Loan._
-import ru.miet.xtestimator.tests.performance.cfggeneration.{StructuredCfgGenerator, StructuredCfgGeneratorCache}
+import ru.miet.xtestimator.tests.performance.cfggeneration.StructuredCfgGenerator
 import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlockConfiguration
 import java.io.File
 import scalax.chart._
@@ -13,6 +13,8 @@ import scalax.chart.Charting._
 import java.awt.Font
 import org.jfree.chart.StandardChartTheme
 import org.jfree.chart.renderer.xy.DeviationRenderer
+import org.jfree.chart.axis.NumberAxis
+import ru.miet.xtestimator.cfg.Cfg
 
 
 object Test {
@@ -25,30 +27,29 @@ object Test {
 				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
 				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
 		}
-		val configurations = (1 to 25 by 3) flatMap createConfigurationGroup
+		val configurations = (1 to 16) flatMap createConfigurationGroup
 
 		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
-			benchmark => loan (new StructuredCfgGeneratorCache) to {
-				cache => for (config <- configurations) yield benchmark(config.toSerializable, benchmarkFactory(config, cache))
+			benchmark => loan (new StructuredCfgGenerator) to {
+				cfgGenerator => for (config <- configurations) yield {
+					val cfg = cfgGenerator(config.programBlockConfig)
+					benchmark(config.toSerializable, benchmarkFactory(config.toString, config.regexBuilderFactory, cfg))
+				}
 			}
 		}
 
 		visualize(configurations zip benchmarkResults)
 	}
 
-	private def benchmarkFactory(config: TestConfiguration, cache: StructuredCfgGeneratorCache) = {
-		val cfgGenerator = new StructuredCfgGenerator(config.programBlockConfig.sequenceLength, config.programBlockConfig.branchCount, cache)
-		val cfg = cfgGenerator.generate(config.programBlockConfig.controlStructureCount)
-
-		new Benchmark(config.toString, new Runnable {
+	private def benchmarkFactory(title: String, regexBuilderFactory: RegexBuilderFactory, cfg: Cfg) =
+		new Benchmark(title, new Runnable {
 			private var r: Regex = null
 			override def run() = {
-				val regexBuilder = config.regexBuilderFactory(cfg)
+				val regexBuilder = regexBuilderFactory(cfg)
 				r = regexBuilder.build
 			}
 			override def toString: String = r.toString
 		})
-	}
 
 	private def visualize(configurationsAndBenchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = {
 		val benchmarkResultSeries = configurationsAndBenchmarkResults.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
@@ -78,6 +79,9 @@ object Test {
 				tooltips = true)(theme)
 
 			chart.plot.setRenderer(new DeviationRenderer())
+			val domainAxis = chart.plot.getDomainAxis.asInstanceOf[NumberAxis]
+			domainAxis.setAutoRangeIncludesZero(false)
+			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
 
 			chart
 		}
