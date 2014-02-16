@@ -7,6 +7,8 @@ case class StochasticVariable(mean: Double, variance: Double) {
 
 	def * (factor: Double): StochasticVariable = StochasticVariable(mean * factor, variance * factor * factor)
 
+	def / (divisor: Double): StochasticVariable = StochasticVariable(mean / divisor, variance / divisor / divisor)
+
 	override def toString: String = f"{E=$mean%.3f, V=$variance%.3f (σ=$stdDeviation%.3f)}"
 }
 

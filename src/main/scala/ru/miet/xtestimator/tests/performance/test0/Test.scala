@@ -12,7 +12,7 @@ import scalax.chart._
 import scalax.chart.Charting._
 import java.awt.Font
 import org.jfree.chart.StandardChartTheme
-import org.jfree.chart.renderer.xy.DeviationRenderer
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.axis.NumberAxis
 import ru.miet.xtestimator.cfg.Cfg
 
@@ -27,37 +27,50 @@ object Test {
 				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
 				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
 		}
-		val configurations = (1 to 10) flatMap createConfigurationGroup
+		val configurations = (5 to 10) flatMap createConfigurationGroup
 		val forcedSet = Set[Int]()
 
 		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
 			benchmark => loan (new StructuredCfgGenerator) to {
-				cfgGenerator => for (config <- configurations) yield {
-					val forced = forcedSet contains config.programBlockConfig.controlStructureCount
-					val cfg = cfgGenerator(config.programBlockConfig, forced)
-					lazy val bmk = benchmarkFactory(config.toString, config.regexBuilderFactory, cfg)
-					benchmark(config.toSerializable, bmk, forced)
-				}
+				cfgGenerator => for (config <- configurations) yield benchmarkSeries(config, forcedSet, cfgGenerator, benchmark)
 			}
 		}
 
 		visualize(configurations zip benchmarkResults)
 	}
 
-	private def benchmarkFactory(title: String, regexBuilderFactory: RegexBuilderFactory, cfg: Cfg) =
+	private def benchmarkSeries(config: TestConfiguration, forcedSet: Set[Int], cfgGenerator: StructuredCfgGenerator, benchmark: MemorizedBenchmark[SerializableTestConfiguration]) = {
+		val forced = forcedSet contains config.programBlockConfig.controlStructureCount
+		val count = 110
+		val cfgSequence = cfgGenerator.getSequence(config.programBlockConfig, count).toArray
+		lazy val bmk = benchmarkFactory(config.toString, config.regexBuilderFactory, cfgSequence)
+		benchmark(config.toSerializable, bmk, forced)
+	}
+
+	private def benchmarkFactory(title: String, regexBuilderFactory: RegexBuilderFactory, cfgSequence: IndexedSeq[Cfg]) = {
+		val cfgSequenceLength = cfgSequence.length
+
 		new Benchmark(title, new Runnable {
+			private val cfgSeq = cfgSequence
+			private var i = 0
 			private var r: Regex = null
 			override def run() = {
-				val regexBuilder = regexBuilderFactory(cfg)
+				val regexBuilder = regexBuilderFactory(cfgSeq(i))
 				r = regexBuilder.build
+				i = (i + 1) % cfgSequenceLength
 			}
 			override def toString: String = r.toString
 		})
+	}
 
 	private def visualize(configurationsAndBenchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = {
 		val benchmarkResultSeries = configurationsAndBenchmarkResults.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
-			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime * 1e-6) })
-		ChartBuilder("Время построения РВ по ГПУ", benchmarkResultSeries).show()
+			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime) })
+		val meanSeries = benchmarkResultSeries mapValues (_ map { case (c, et) => (c, et.mean * 1e-9) })
+		val stdDeviationSeries = benchmarkResultSeries mapValues (_ map { case (c, et) => (c, et.stdDeviation * 1e-9) })
+
+		ChartBuilder("Время построения РВ по ГПУ", "Время построения, с", meanSeries).show()
+		ChartBuilder("Квадратичное отклонение времени построения РВ по ГПУ", "Квадратичное отклонение, с", stdDeviationSeries).show()
 	}
 
 	private case class TestConfiguration(programBlockConfig: ProgramBlockConfiguration, regexBuilderFactory: RegexBuilderFactory) {
@@ -72,16 +85,17 @@ object Test {
 	private case class SerializableTestConfiguration(sequenceLength: Int, branchCount: Int, controlStructureCount: Int, regexBuilderId: String)
 
 	private object ChartBuilder {
-		def apply(title: String, benchmarkResultSeries: Map[String, Seq[(Int, StochasticVariable)]]) = {
+		def apply(title: String, yLabel: String, benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
 			val chart = ChartFactories.XYLineChart(
 				createDataSet(benchmarkResultSeries),
 				title = title,
 				domainAxisLabel = "Количество управляющих конструкций",
-				rangeAxisLabel = "Время построения, мс",
+				rangeAxisLabel = yLabel,
 				legend = true,
 				tooltips = true)(theme)
 
-			chart.plot.setRenderer(new DeviationRenderer())
+			chart.plot.setRenderer(new XYLineAndShapeRenderer)
+
 			val domainAxis = chart.plot.getDomainAxis.asInstanceOf[NumberAxis]
 			domainAxis.setAutoRangeIncludesZero(false)
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
@@ -89,13 +103,9 @@ object Test {
 			chart
 		}
 		
-		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, StochasticVariable)]]) = {
-			def expandResult(result: (Int, StochasticVariable)) = {
-				val (x, y) = result
-				(x, y.mean, y.mean - 3 * y.stdDeviation, y.mean + 3 * y.stdDeviation)
-			}
-			val series = benchmarkResultSeries.map { case (builderId, results) => results.map(expandResult).toYIntervalSeries(builderId) }
-			series.toYIntervalSeriesCollection
+		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
+			val series = benchmarkResultSeries.map { case (builderId, results) => results.toXYSeries(builderId) }
+			series.toXYSeriesCollection
 		}
 
 		private val theme = {

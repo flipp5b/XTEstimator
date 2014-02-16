@@ -7,7 +7,6 @@ import StructuredCfgGenerator._
 import java.io._
 import scala.collection.mutable
 import ru.miet.utils.Loan._
-import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlockImplicits.ProgramBlockAssoc
 
 
 class StructuredCfgGenerator extends AutoCloseable {
@@ -17,33 +16,38 @@ class StructuredCfgGenerator extends AutoCloseable {
 	private def initCache() = {
 		if (cacheFile.exists)
 			loan (new ObjectInputStream(new FileInputStream(cacheFile))) to {
-				_.readObject().asInstanceOf[mutable.HashMap[ProgramBlockConfiguration, ProgramBlock]]
+				_.readObject().asInstanceOf[mutable.HashMap[ProgramBlockConfiguration, Seq[ProgramBlock]]]
 			}
 		else
-			mutable.HashMap[ProgramBlockConfiguration, ProgramBlock]()
+			mutable.HashMap[ProgramBlockConfiguration, Seq[ProgramBlock]]()
 	}
 
 	override def close(): Unit = loan (new ObjectOutputStream(new FileOutputStream(cacheFile))) to {
 		_.writeObject(cache)
 	}
 
-	def apply(config: ProgramBlockConfiguration, forced: Boolean = false): Cfg = {
-		if (forced || !(cache contains config)) {
-			val programBlockGenerator = new ProgramBlockGenerator(config.sequenceLength, config.branchCount)
-			val programBlock = programBlockGenerator(config.controlStructureCount)
-			cache(config) = programBlock
+	def getSequence(config: ProgramBlockConfiguration, count: Int): Seq[Cfg] = {
+		val relevantEntries = cache get config match {
+			case Some(s) => s
+			case None => Seq()
+		}
 
-			programBlock.toCfg
+		val programBlocks = if (relevantEntries.length >= count) {
+			relevantEntries.take(count)
 		}
 		else {
-			cache(config).toCfg
-		}
-	}
+			val missingEntriesCount = count - relevantEntries.length
+			val missingEntries = for (i <- 1 to missingEntriesCount) yield {
+				val programBlockGenerator = new ProgramBlockGenerator(config.sequenceLength, config.branchCount)
+				programBlockGenerator(config.controlStructureCount)
+			}
+			val result = relevantEntries ++ missingEntries
+			cache(config) = result
 
-	def statistics: List[(ProgramBlockConfiguration, ProgramBlockStatistics)] =
-		cache.toList sortBy { case (config, _) => config.controlStructureCount } map {
-			case (config, block) => (config, block.statistics)
+			result
 		}
+		programBlocks.map(_.toCfg)
+	}
 
 	private class ProgramBlockGenerator(sequenceLength: Int, branchCount: Int) {
 		def apply(controlStructureCount: Int): ProgramBlock = {

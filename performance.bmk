@@ -4,64 +4,64 @@
   "controlStructureCount" : 1,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 39670.37944997151,
-  "variance" : 3.2504201510542566E8
+  "mean" : 37043.94053548178,
+  "variance" : 5.646588333868195E8
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 1,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 74241.61725362141,
-  "variance" : 2.2217833214707062E8
+  "mean" : 61990.95751647948,
+  "variance" : 5.013510802602906E8
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 4,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 1028888.6290201822,
-  "variance" : 8.512443660325318E9
+  "mean" : 2876494.8446289063,
+  "variance" : 1.673598615692314E12
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 4,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 665050.2595458984,
-  "variance" : 1.752358998224343E9
+  "mean" : 722883.9334147135,
+  "variance" : 8.640679581981646E9
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 7,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 1724837.6375000004,
-  "variance" : 5.8500678707201395E9
+  "mean" : 4.912600342770833E8,
+  "variance" : 2.8307166278537421E18
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 7,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 3430085.66796875,
-  "variance" : 2.1140707818543896E10
+  "mean" : 2.2701144189062502E7,
+  "variance" : 6.78163050046149E15
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 10,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 6566919.96484375,
-  "variance" : 3.754354527695486E10
+  "mean" : 6.881360574816668E9,
+  "variance" : 2.8394290587869564E20
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 10,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 8017986.138932294,
-  "variance" : 9.841382915556287E10
+  "mean" : 1.2023329527083333E9,
+  "variance" : 2.5247185118859194E19
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
@@ -148,96 +148,96 @@
   "controlStructureCount" : 2,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 65206.766272989895,
-  "variance" : 3.8607729183486694E8
+  "mean" : 163783.0274597168,
+  "variance" : 1.6412273085509925E9
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 2,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 99439.89107971193,
-  "variance" : 1.0132894298085375E9
+  "mean" : 175054.4708190919,
+  "variance" : 1.8517973810325289E9
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 3,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 29678.45296859742,
-  "variance" : 1.2853452531650779E8
+  "mean" : 633178.4578776044,
+  "variance" : 6.101856728096498E9
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 3,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 75532.75850830077,
-  "variance" : 2.8610337138104904E8
+  "mean" : 392942.75673828146,
+  "variance" : 4.776442453450648E9
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 5,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 769124.5770100914,
-  "variance" : 2.337808886147607E9
+  "mean" : 1.248355057786459E7,
+  "variance" : 1.6946735807689278E14
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 5,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 1218569.1320800784,
-  "variance" : 9.398780815775734E9
+  "mean" : 2263073.434016926,
+  "variance" : 1.0256224264432617E12
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 6,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 1351223.8065917967,
-  "variance" : 9.652955489553347E9
+  "mean" : 3.9700885259375E7,
+  "variance" : 1.7737568663461864E16
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 6,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 1102545.1964680993,
-  "variance" : 6.149933783298151E9
+  "mean" : 3627396.7505208347,
+  "variance" : 4.791011626815733E12
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 8,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 2289077.4395833337,
-  "variance" : 1.0908190037192432E10
+  "mean" : 1.4133580472854178E9,
+  "variance" : 3.4193218850852966E19
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 8,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 3384369.1280924473,
-  "variance" : 5.0116758560041435E10
+  "mean" : 1.32738368975E8,
+  "variance" : 1.72417458066739872E17
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 9,
   "regexBuilderId" : "SimpleRegexBuilder"
 }, {
-  "mean" : 2082605.1925130207,
-  "variance" : 3.579845494608325E10
+  "mean" : 2.881360574816668E9,
+  "variance" : 1.8394290587869564E20
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
   "controlStructureCount" : 9,
   "regexBuilderId" : "RegexBuilderWithTransitiveClosure"
 }, {
-  "mean" : 4949062.562434895,
-  "variance" : 2.4636943665260212E10
+  "mean" : 7.275259817916665E8,
+  "variance" : 1.8832961308787044E19
 } ], [ {
   "sequenceLength" : 4,
   "branchCount" : 2,
