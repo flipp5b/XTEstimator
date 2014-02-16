@@ -27,8 +27,8 @@ class StructuredCfgGenerator extends AutoCloseable {
 		_.writeObject(cache)
 	}
 
-	def apply(config: ProgramBlockConfiguration, forceGeneration: Boolean = false): Cfg = {
-		if (forceGeneration || !(cache contains config)) {
+	def apply(config: ProgramBlockConfiguration, forced: Boolean = false): Cfg = {
+		if (forced || !(cache contains config)) {
 			val programBlockGenerator = new ProgramBlockGenerator(config.sequenceLength, config.branchCount)
 			val programBlock = programBlockGenerator(config.controlStructureCount)
 			cache(config) = programBlock

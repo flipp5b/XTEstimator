@@ -27,13 +27,16 @@ object Test {
 				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
 				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
 		}
-		val configurations = (1 to 16) flatMap createConfigurationGroup
+		val configurations = (1 to 10) flatMap createConfigurationGroup
+		val forcedSet = Set[Int]()
 
 		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
 			benchmark => loan (new StructuredCfgGenerator) to {
 				cfgGenerator => for (config <- configurations) yield {
-					val cfg = cfgGenerator(config.programBlockConfig)
-					benchmark(config.toSerializable, benchmarkFactory(config.toString, config.regexBuilderFactory, cfg))
+					val forced = forcedSet contains config.programBlockConfig.controlStructureCount
+					val cfg = cfgGenerator(config.programBlockConfig, forced)
+					lazy val bmk = benchmarkFactory(config.toString, config.regexBuilderFactory, cfg)
+					benchmark(config.toSerializable, bmk, forced)
 				}
 			}
 		}

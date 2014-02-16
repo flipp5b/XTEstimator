@@ -33,8 +33,8 @@ class MemorizedBenchmark[K : Manifest](val historyFile: File) extends AutoClosea
 
 	override def close(): Unit = mapper.writeValue(historyFile, history.toList)
 
-	def apply(key: K, benchmarkFactory: => Benchmark, forceBenchmarking: Boolean = false): StochasticVariable =
-		if (forceBenchmarking || !(history contains key)) {
+	def apply(key: K, benchmarkFactory: => Benchmark, forced: Boolean = false): StochasticVariable =
+		if (forced || !(history contains key)) {
 			val benchmark = benchmarkFactory
 			println(benchmark)
 			val executionTime = benchmark.getExecutionTime
