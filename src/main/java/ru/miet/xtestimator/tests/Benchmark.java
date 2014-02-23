@@ -5,12 +5,13 @@ import ru.miet.xtestimator.StochasticVariable$;
 
 
 public class Benchmark {
-	private String title;
-	public bb.util.Benchmark benchmark;
+	private final String title;
+	public final bb.util.Benchmark benchmark;
 
 	public Benchmark(String title, Runnable task) {
 		this.title = title;
-		this.benchmark = new bb.util.Benchmark(task);
+		bb.util.Benchmark.Params params = new bb.util.Benchmark.Params();
+		this.benchmark = new bb.util.Benchmark(task, params);
 	}
 
 	public StochasticVariable getExecutionTime() {

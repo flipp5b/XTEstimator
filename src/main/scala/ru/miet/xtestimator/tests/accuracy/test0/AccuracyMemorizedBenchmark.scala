@@ -1,47 +1,15 @@
 package ru.miet.xtestimator.tests.accuracy.test0
 
 import ru.miet.xtestimator.StochasticVariable
-import ru.miet.xtestimator.tests.Benchmark
+import ru.miet.xtestimator.tests.{MemorizedBenchmark, Benchmark}
 import java.util.Random
-import scala.collection.mutable
-import com.fasterxml.jackson.databind.{SerializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import java.io.File
+import org.apache.commons.math3.distribution.IntegerDistribution
+import ru.miet.xtestimator.tests.accuracy.test0.AccuracyMemorizedBenchmark._
 
 
-// TODO: extend MemorizedBenchmark
-object BenchmarkData {
-	var forceBenchmarking: Boolean = false
-	private val historyFile = new File("history.bmk")
-	private val history = mutable.LinkedHashMap[Key, StochasticVariable]()
-	private val mapper = new ObjectMapper() with ScalaObjectMapper
-	mapper.configure(SerializationFeature.INDENT_OUTPUT, true)
-	mapper.registerModule(DefaultScalaModule)
-
-	def load(): Unit = {
-		val historyList = mapper.readValue[List[(Key, StochasticVariable)]](historyFile)
-		history ++= historyList
-	}
-
-	def save(): Unit = {
-		mapper.writeValue(historyFile, history.toList)
-	}
-
-	private def benchmark(key: Key, benchmarkConstructor: => Benchmark) =
-		if (forceBenchmarking || !(history contains key)) {
-			val benchmark = benchmarkConstructor
-			println(benchmark)
-			val executionTime = benchmark.getExecutionTime
-			history(key) = executionTime
-			executionTime
-		}
-		else {
-			history(key)
-		}
-
+class AccuracyMemorizedBenchmark extends MemorizedBenchmark[Key, StochasticVariable]("accuracy.bmk") {
 	def basicBlockExecutionTime(id: String): StochasticVariable =
-		benchmark(Key(id, None), id match {
+		apply(Key(id, None), id match {
 			case "a" => initialization
 			case "b" => loopHeader
 			case "c" => ifHeader
@@ -50,18 +18,26 @@ object BenchmarkData {
 			case "f" => loopFooter
 		})
 
+	def entireProgramBenchmarkResult(config: Configuration): StochasticVariable = apply(Key("entire", Some(config)), entireProgram(config))
+
+	override protected def convert(benchmark: Benchmark): StochasticVariable = benchmark.getExecutionTime
+}
+
+object AccuracyMemorizedBenchmark {
 	private def initialization =
 		new Benchmark("Initialization", new Runnable {
-			private var n: Double = .0
-			private var v: Double = .0
-			private var i: Int = 0
+			private val loopBoundDistribution: IntegerDistribution = Configuration(1000, 0.5, 0.7).loopBoundDistribution
+			private var rand: Random = _
+			private var n: Double = _
+			private var v: Double = _
+			private var i: Int = _
 			def run(): Unit = {
-				val rand: Random = new Random
-				n = rand.nextGaussian * 0 + 1000
-				v = 0
+				rand = new Random
+				n = loopBoundDistribution.sample()
+				v = 1.1
 				i = 0
 			}
-			override def toString: String = s"n=$n; v=$v; i=$i"
+			override def toString: String = s"n=$n; v=$v; i=$i; rand=$rand"
 		})
 
 	private def loopHeader =
@@ -114,18 +90,15 @@ object BenchmarkData {
 			override def toString: String = s"i=$i"
 		})
 
-	def entireProgramExecutionTime(config: Configuration): StochasticVariable = benchmark(Key("entire", Some(config)), entireProgram(config))
-
 	private def entireProgram(config: Configuration) =
 		new Benchmark("Entire program", new Runnable {
-			private val nStd: Double = config.loopBound.stdDeviation
-			private val nE: Double = config.loopBound.mean
+			private val loopBoundDistribution: IntegerDistribution = config.loopBoundDistribution
 			private val trueBranchProbability: Double = config.trueBranchProbability
 			private var v: Double = .0
 
 			def run(): Unit = {
 				val rand: Random = new Random
-				val n: Double = rand.nextGaussian * nStd + nE
+				val n: Int = loopBoundDistribution.sample()
 				v = 1.1
 				var i: Int = 0
 				while (i < n) {
@@ -135,7 +108,6 @@ object BenchmarkData {
 					else {
 						v += Math.log(v)
 					}
-
 					i += 1
 				}
 			}
@@ -144,5 +116,5 @@ object BenchmarkData {
 		})
 
 
-	private case class Key(id: String, config: Option[Configuration])
+	case class Key(id: String, config: Option[Configuration])
 }

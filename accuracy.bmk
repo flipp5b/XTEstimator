@@ -1,0 +1,97 @@
+[ [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000,
+    "loopBoundP" : 0.3,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 165217.19807332353,
+  "variance" : 5.486832978024604E8
+} ], [ {
+  "id" : "a",
+  "config" : null
+}, {
+  "mean" : 11617.244696807864,
+  "variance" : 3.263236170240832E7
+} ], [ {
+  "id" : "b",
+  "config" : null
+}, {
+  "mean" : 3.2733961408336962,
+  "variance" : 35810.97662806046
+} ], [ {
+  "id" : "c",
+  "config" : null
+}, {
+  "mean" : 23.372047135978942,
+  "variance" : 133328.5188717908
+} ], [ {
+  "id" : "d",
+  "config" : null
+}, {
+  "mean" : 723.7685025850934,
+  "variance" : 1855774.853143072
+} ], [ {
+  "id" : "e",
+  "config" : null
+}, {
+  "mean" : 28.7772878035903,
+  "variance" : 94644.97658844606
+} ], [ {
+  "id" : "f",
+  "config" : null
+}, {
+  "mean" : 3.4261293985570473,
+  "variance" : 30754.06522546568
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000,
+    "loopBoundP" : 0.5,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 273786.61829020194,
+  "variance" : 8.739648817149911E8
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000,
+    "loopBoundP" : 0.7,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 380459.020707194,
+  "variance" : 1.1133275654802253E9
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000000,
+    "loopBoundP" : 0.3,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 1.6156146300416666E8,
+  "variance" : 1.2071165403801826E12
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000000,
+    "loopBoundP" : 0.5,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 2.688425114583333E8,
+  "variance" : 4.194422141628653E11
+} ], [ {
+  "id" : "entire",
+  "config" : {
+    "loopBoundN" : 1000000,
+    "loopBoundP" : 0.7,
+    "trueBranchProbability" : 0.7
+  }
+}, {
+  "mean" : 3.765449641833334E8,
+  "variance" : 1.2872343942817036E12
+} ] ]

@@ -2,12 +2,11 @@ package ru.miet.xtestimator.tests.performance.test0
 
 import java.util.Locale
 import ru.miet.xtestimator.StochasticVariable
-import ru.miet.xtestimator.tests.{MemorizedBenchmark, Benchmark}
+import ru.miet.xtestimator.tests.Benchmark
 import ru.miet.xtestimator.regex._
 import ru.miet.utils.Loan._
 import ru.miet.xtestimator.tests.performance.cfggeneration.StructuredCfgGenerator
 import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlockConfiguration
-import java.io.File
 import scalax.chart._
 import scalax.chart.Charting._
 import java.awt.Font
@@ -30,7 +29,7 @@ object Test {
 		val configurations = (5 to 10) flatMap createConfigurationGroup
 		val forcedSet = Set[Int]()
 
-		val benchmarkResults = loan (new MemorizedBenchmark[SerializableTestConfiguration](new File("performance.bmk"))) to {
+		val benchmarkResults = loan (new PerformanceMemorizedBenchmark) to {
 			benchmark => loan (new StructuredCfgGenerator) to {
 				cfgGenerator => for (config <- configurations) yield benchmarkSeries(config, forcedSet, cfgGenerator, benchmark)
 			}
@@ -39,7 +38,7 @@ object Test {
 		visualize(configurations zip benchmarkResults)
 	}
 
-	private def benchmarkSeries(config: TestConfiguration, forcedSet: Set[Int], cfgGenerator: StructuredCfgGenerator, benchmark: MemorizedBenchmark[SerializableTestConfiguration]) = {
+	private def benchmarkSeries(config: TestConfiguration, forcedSet: Set[Int], cfgGenerator: StructuredCfgGenerator, benchmark: PerformanceMemorizedBenchmark) = {
 		val forced = forcedSet contains config.programBlockConfig.controlStructureCount
 		val count = 110
 		val cfgSequence = cfgGenerator.getSequence(config.programBlockConfig, count).toArray
@@ -72,17 +71,6 @@ object Test {
 		ChartBuilder("Время построения РВ по ГПУ", "Время построения, с", meanSeries).show()
 		ChartBuilder("Квадратичное отклонение времени построения РВ по ГПУ", "Квадратичное отклонение, с", stdDeviationSeries).show()
 	}
-
-	private case class TestConfiguration(programBlockConfig: ProgramBlockConfiguration, regexBuilderFactory: RegexBuilderFactory) {
-		def toSerializable =
-			SerializableTestConfiguration(
-				programBlockConfig.sequenceLength,
-				programBlockConfig.branchCount,
-				programBlockConfig.controlStructureCount,
-				regexBuilderFactory.builderId)
-	}
-
-	private case class SerializableTestConfiguration(sequenceLength: Int, branchCount: Int, controlStructureCount: Int, regexBuilderId: String)
 
 	private object ChartBuilder {
 		def apply(title: String, yLabel: String, benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
