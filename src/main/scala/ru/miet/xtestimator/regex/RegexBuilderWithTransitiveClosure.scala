@@ -7,7 +7,7 @@ import ru.miet.xtestimator.cfg.Cfg
 import RegexImplicits._
 
 
-class RegexBuilderWithTransitiveClosure(cfg: Cfg) extends RegexBuilder {
+final class RegexBuilderWithTransitiveClosure(cfg: Cfg) extends RegexBuilder {
 	private val transitiveClosure = TransitiveClosure(cfg)
 
 	def build: Regex = buildRegex(Set.empty, cfg.entry, cfg.exit) + Literal(cfg.exit)
@@ -42,7 +42,7 @@ object RegexBuilderWithTransitiveClosure extends RegexBuilderFactory {
 
 	override def builderId: String = "RegexBuilderWithTransitiveClosure"
 
-	override def builderDescription: String = "Алгоритм построения с транзитивным замыканием"
+	override def builderDescription: String = "Алгоритм построения с использованием транзитивного замыкания"
 
 	override def toString: String = builderId
 }

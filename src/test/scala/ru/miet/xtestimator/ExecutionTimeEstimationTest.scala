@@ -2,12 +2,16 @@ package ru.miet.xtestimator
 
 import ru.miet.xtestimator.cfg.Cfg.{Edge, Vertex}
 import ru.miet.xtestimator.cfg.Cfg
-import ru.miet.xtestimator.regex.{RegexBuilderWithTransitiveClosure, SimpleRegexBuilder, RegexBuilder}
+import ru.miet.xtestimator.regex.{PackratRegexBuilderWithTransitiveClosure, PackratRegexBuilder, RegexBuilderWithTransitiveClosure, SimpleRegexBuilder}
 import org.scalatest.FunSuite
 
 
 class ExecutionTimeEstimationTest extends FunSuite {
-	private val regexBuilderFactories = Seq(SimpleRegexBuilder, RegexBuilderWithTransitiveClosure)
+	private val regexBuilderFactories = Seq(
+		SimpleRegexBuilder,
+		RegexBuilderWithTransitiveClosure,
+		PackratRegexBuilder,
+		PackratRegexBuilderWithTransitiveClosure)
 
 	test("Execution time is correctly estimated by CFG") {
 		regexBuilderFactories foreach { regexBuilderFactory =>

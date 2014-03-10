@@ -7,7 +7,7 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 import RegexImplicits._
 
 
-class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
+final class SimpleRegexBuilder(cfg: Cfg) extends RegexBuilder {
 	def build: Regex = buildRegex(Set.empty, cfg.entry, cfg.exit) + Literal(cfg.exit)
 
 	private def buildRegex(forbiddenSet: Set[Vertex], source: Vertex, target: Vertex): Regex = {

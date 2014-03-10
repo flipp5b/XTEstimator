@@ -10,7 +10,11 @@ import ru.miet.xtestimator.regex.BatchAlternation.Branch
 
 
 class RegexBuilderTest extends FunSuite {
-	private val regexBuilderFactories = Seq(SimpleRegexBuilder, RegexBuilderWithTransitiveClosure)
+	private val regexBuilderFactories = Seq(
+		SimpleRegexBuilder,
+		RegexBuilderWithTransitiveClosure,
+		PackratRegexBuilder,
+		PackratRegexBuilderWithTransitiveClosure)
 	
 	private def vertex(id: String) = Vertex(id, new StochasticVariable(0, 0))
 

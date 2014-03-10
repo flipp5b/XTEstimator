@@ -302,4 +302,260 @@
 }, {
   "mean" : 1.1932932555312498E8,
   "variance" : 9.506873125842738E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 5,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1307340.5245442707,
+  "variance" : 3.7530276927591844E9
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 6,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1843269.2512858075,
+  "variance" : 2.0671355431907066E10
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 7,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 2976467.227571614,
+  "variance" : 4.899714630199385E10
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 8,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 4206437.434049479,
+  "variance" : 9.400080628687383E10
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 9,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 5761267.664127606,
+  "variance" : 3.506583228705439E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 10,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 7583322.148632813,
+  "variance" : 6.994950419677415E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 5,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 458471.00104980456,
+  "variance" : 7.303886804178011E9
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 6,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 599526.082486979,
+  "variance" : 8.000315829982296E9
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 7,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 1252491.9534667972,
+  "variance" : 5.8797961434041855E10
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 8,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 1506462.6164550781,
+  "variance" : 1.5452440845129465E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 9,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 2837454.359798178,
+  "variance" : 1.7001945906047446E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 10,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 3192451.53688151,
+  "variance" : 1.2853124118563105E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 11,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 3835461.190852864,
+  "variance" : 2.334983179539504E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 11,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 9295146.107682293,
+  "variance" : 4.7409290025213135E11
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 12,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 5084453.433333334,
+  "variance" : 1.1753802908248611E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 12,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1.1313620338281248E7,
+  "variance" : 1.273969191443929E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 13,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 5942261.403385416,
+  "variance" : 7.1949382964351045E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 13,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1.4584009855338547E7,
+  "variance" : 4.241825714880787E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 14,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 9526652.34309896,
+  "variance" : 3.529348900323271E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 14,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1.7723023225260418E7,
+  "variance" : 4.771508810191941E12
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 15,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 1.1217325538411457E7,
+  "variance" : 2.9332418493657106E14
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 15,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 1.966640516354167E7,
+  "variance" : 1.1141697858147523E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 16,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 1.1542478910677087E7,
+  "variance" : 1.5992157571165088E14
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 16,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 2.579612196848959E7,
+  "variance" : 7.613755500171975E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 17,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 1.7352835668749988E7,
+  "variance" : 2.2188752470174656E16
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 17,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 3.150223153125E7,
+  "variance" : 1.2429043927199223E14
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 18,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 2.296732938893229E7,
+  "variance" : 6.224932889889364E13
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 18,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 3.413521594375001E7,
+  "variance" : 3.263479981272753E14
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 19,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 3.5776767844791666E7,
+  "variance" : 1.0294531007066174E16
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 19,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 4.6279190045312494E7,
+  "variance" : 1.0792724168418886E15
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 20,
+  "regexBuilderId" : "PackratRegexBuilder"
+}, {
+  "mean" : 4.5918064104687504E7,
+  "variance" : 3.5600589384472852E16
+} ], [ {
+  "sequenceLength" : 4,
+  "branchCount" : 2,
+  "controlStructureCount" : 20,
+  "regexBuilderId" : "PackratRegexBuilderWithTransitiveClosure"
+}, {
+  "mean" : 5.692953562812502E7,
+  "variance" : 3.1863252184108275E15
 } ] ]

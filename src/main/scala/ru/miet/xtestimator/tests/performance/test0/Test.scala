@@ -24,7 +24,9 @@ object Test {
 			val programBlockConfiguration = ProgramBlockConfiguration(sequenceLength = 4, branchCount = 2, controlStructureCount)
 			Seq(
 				TestConfiguration(programBlockConfiguration, SimpleRegexBuilder),
-				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure))
+				TestConfiguration(programBlockConfiguration, RegexBuilderWithTransitiveClosure),
+				TestConfiguration(programBlockConfiguration, PackratRegexBuilder),
+				TestConfiguration(programBlockConfiguration, PackratRegexBuilderWithTransitiveClosure))
 		}
 		val configurations = (5 to 10) flatMap createConfigurationGroup
 		val forcedSet = Set[Int]()
@@ -63,20 +65,37 @@ object Test {
 	}
 
 	private def visualize(configurationsAndBenchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = {
-		val benchmarkResultSeries = configurationsAndBenchmarkResults.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
-			.mapValues(_.map { case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime) })
-		val meanSeries = benchmarkResultSeries mapValues (_ map { case (c, et) => (c, et.mean * 1e-9) })
-		val stdDeviationSeries = benchmarkResultSeries mapValues (_ map { case (c, et) => (c, et.stdDeviation * 1e-9) })
+		implicit class SeqOfPairs[K, V](seq: Seq[(K, V)]) {
+			def mapValues[NV](mapper: V => NV) = seq map {
+				case (key, value) => (key, mapper(value))
+			}
+		}
 
-		ChartBuilder("Время построения РВ по ГПУ", "Время построения, с", meanSeries).show()
-		ChartBuilder("Квадратичное отклонение времени построения РВ по ГПУ", "Квадратичное отклонение, с", stdDeviationSeries).show()
+		def indexOf(builderDescription: String) = configurationsAndBenchmarkResults indexWhere {
+			case (config, _) => config.regexBuilderFactory.builderDescription == builderDescription
+		}
+		def benchmarkResultsToPoints(benchmarkResults: Seq[(TestConfiguration, StochasticVariable)]) = benchmarkResults map {
+			case (config, executionTime) => (config.programBlockConfig.controlStructureCount, executionTime)
+		}
+
+		val pointSeries = configurationsAndBenchmarkResults
+			.groupBy { case (config, _) => config.regexBuilderFactory.builderDescription }
+			.toSeq
+			.sortBy { case (builderDescription, _) => indexOf(builderDescription) }
+			.mapValues(benchmarkResultsToPoints)
+
+		val meanSeries = pointSeries mapValues (_ mapValues (_.mean * 1e-6))
+		val stdDeviationSeries = pointSeries mapValues (_ mapValues (_.stdDeviation * 1e-6))
+
+		ChartBuilder("Время построения РВ по ГПУ", "Время построения, мс", meanSeries).show()
+		ChartBuilder("Квадратичное отклонение времени построения РВ по ГПУ", "Квадратичное отклонение, мс", stdDeviationSeries).show()
 	}
 
 	private object ChartBuilder {
-		def apply(title: String, yLabel: String, benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
+		def apply(title: String, yLabel: String, benchmarkResultSeries: Seq[(String, Seq[(Int, Double)])]) = {
 			val chart = ChartFactories.XYLineChart(
 				createDataSet(benchmarkResultSeries),
-				title = title,
+				title = null,
 				domainAxisLabel = "Количество управляющих конструкций",
 				rangeAxisLabel = yLabel,
 				legend = true,
@@ -91,8 +110,10 @@ object Test {
 			chart
 		}
 		
-		def createDataSet(benchmarkResultSeries: Map[String, Seq[(Int, Double)]]) = {
-			val series = benchmarkResultSeries.map { case (builderId, results) => results.toXYSeries(builderId) }
+		def createDataSet(benchmarkResultSeries: Seq[(String, Seq[(Int, Double)])]) = {
+			val series = benchmarkResultSeries map {
+				case (builderId, results) => results.toXYSeries(builderId)
+			}
 			series.toXYSeriesCollection
 		}
 

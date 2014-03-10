@@ -108,7 +108,7 @@ object Test {
 		def build(title: String, yLabel: String, testInfoSeq: Seq[ChartCategory]) = {
 			val chart = ChartFactories.BarChart(
 				createDataSet(testInfoSeq),
-				title = title,
+				title = null,
 				domainAxisLabel = "Конфигурации",
 				rangeAxisLabel = yLabel,
 				legend = true,
