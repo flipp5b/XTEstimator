@@ -7,7 +7,7 @@ import ru.miet.xtestimator.regex.RegexBuilderWithTransitiveClosure
 import scalax.chart._
 import scalax.chart.Charting._
 import org.jfree.chart.StandardChartTheme
-import java.awt.Font
+import java.awt.{Color, Font}
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator
 import java.util.Locale
 import ru.miet.utils.Loan.loan
@@ -33,7 +33,7 @@ object Test {
 			test(Configuration(loopBound, 0.5, 0.7), benchmark),
 			test(Configuration(loopBound, 0.7, 0.7), benchmark))
 
-		val windowSize = (940, 450)
+		val windowSize = (640, 450)
 		ChartBuilder.build(
 			"Время исполнения тестовой программы",
 			"Среднее значение, " + unitOfMeasure,
@@ -114,9 +114,13 @@ object Test {
 				legend = true,
 				tooltips = true)(theme)
 
-			val renderer = chart.peer.getCategoryPlot.getRenderer
+			val plot = chart.peer.getCategoryPlot
+			val renderer = plot.getRenderer
 			renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator)
 			renderer.setBaseItemLabelsVisible(true)
+
+			plot.setBackgroundPaint(Color.WHITE)
+			plot.setRangeGridlinePaint(Color.DARK_GRAY)
 
 			chart
 		}
