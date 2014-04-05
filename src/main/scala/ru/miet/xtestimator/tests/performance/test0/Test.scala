@@ -9,7 +9,7 @@ import ru.miet.xtestimator.tests.performance.cfggeneration.StructuredCfgGenerato
 import ru.miet.xtestimator.tests.performance.cfggeneration.ProgramBlockConfiguration
 import scalax.chart._
 import scalax.chart.Charting._
-import java.awt.Font
+import java.awt.{Color, Font}
 import org.jfree.chart.StandardChartTheme
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.axis.NumberAxis
@@ -87,8 +87,9 @@ object Test {
 		val meanSeries = pointSeries mapValues (_ mapValues (_.mean * 1e-6))
 		val stdDeviationSeries = pointSeries mapValues (_ mapValues (_.stdDeviation * 1e-6))
 
-		ChartBuilder("Время построения РВ по ГПУ", "Время построения, мс", meanSeries).show()
-		ChartBuilder("Квадратичное отклонение времени построения РВ по ГПУ", "Квадратичное отклонение, мс", stdDeviationSeries).show()
+		val windowSize = (640, 450)
+		ChartBuilder("Время построения РВ по ГПУ", "Время построения, мс", meanSeries).show(dim = windowSize)
+		ChartBuilder("Стандартное отклонение времени построения РВ по ГПУ", "Стандартное отклонение, мс", stdDeviationSeries).show(dim = windowSize)
 	}
 
 	private object ChartBuilder {
@@ -101,11 +102,15 @@ object Test {
 				legend = true,
 				tooltips = true)(theme)
 
-			chart.plot.setRenderer(new XYLineAndShapeRenderer)
+			val plot = chart.plot
+			plot.setRenderer(new XYLineAndShapeRenderer)
 
-			val domainAxis = chart.plot.getDomainAxis.asInstanceOf[NumberAxis]
+			val domainAxis = plot.getDomainAxis.asInstanceOf[NumberAxis]
 			domainAxis.setAutoRangeIncludesZero(false)
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
+
+			plot.setBackgroundPaint(Color.WHITE)
+			plot.setRangeGridlinePaint(Color.DARK_GRAY)
 
 			chart
 		}
